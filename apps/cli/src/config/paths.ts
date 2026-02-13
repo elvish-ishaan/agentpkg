@@ -1,0 +1,17 @@
+import { homedir } from "node:os";
+import { join } from "node:path";
+
+// Configuration directory (~/.agentpkg)
+export const CONFIG_DIR = join(homedir(), ".agentpkg");
+
+// Configuration file path
+export const CONFIG_FILE = join(CONFIG_DIR, "config.json");
+
+// Default API URL (can be overridden with AGENTPKG_API_URL env var)
+export const DEFAULT_API_URL = "http://localhost:4000";
+
+// Install directory for agents (.github/agents)
+export const INSTALL_DIR = ".github/agents";
+
+// Agent filename
+export const AGENT_FILENAME = "agent.agent.md";

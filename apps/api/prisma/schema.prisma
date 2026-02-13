@@ -1,0 +1,114 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  username  String   @unique
+  password  String // bcrypt hash
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  ownedOrgs  Org[]        @relation("OrgOwner")
+  memberships OrgMember[]
+  apiTokens   ApiToken[]
+
+  @@map("users")
+}
+
+model Org {
+  id        String   @id @default(cuid())
+  name      String   @unique // org namespace (e.g., "myorg")
+  ownerId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  owner   User        @relation("OrgOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  members OrgMember[]
+  agents  Agent[]
+
+  @@index([ownerId])
+  @@map("orgs")
+}
+
+model OrgMember {
+  id        String   @id @default(cuid())
+  orgId     String
+  userId    String
+  role      String   @default("member") // "owner" or "member"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  org  Org  @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([orgId, userId])
+  @@index([userId])
+  @@index([orgId])
+  @@map("org_members")
+}
+
+model Agent {
+  id            String   @id @default(cuid())
+  name          String // agent name (e.g., "test-agent")
+  orgId         String
+  description   String?
+  latestVersion String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  org      Org            @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  versions AgentVersion[]
+
+  @@unique([orgId, name])
+  @@index([orgId])
+  @@map("agents")
+}
+
+model AgentVersion {
+  id          String   @id @default(cuid())
+  agentId     String
+  version     String // semver (e.g., "0.1.0")
+  content     String   @db.Text // agent.md file content
+  checksum    String // SHA-256 checksum
+  gcsPath     String // GCS object path
+  publishedBy String?
+  createdAt   DateTime @default(now())
+
+  // Relations
+  agent Agent @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  @@unique([agentId, version])
+  @@index([agentId])
+  @@map("agent_versions")
+}
+
+model ApiToken {
+  id         String    @id @default(cuid())
+  userId     String
+  tokenHash  String    @unique // SHA-256 hash of the token
+  name       String?   // optional name for the token
+  lastUsedAt DateTime?
+  createdAt  DateTime  @default(now())
+  expiresAt  DateTime? // optional expiration
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([tokenHash])
+  @@map("api_tokens")
+}
