@@ -1,7 +1,7 @@
 {
   "name": "@agentpkg/cli",
-  "version": "0.1.0",
-  "description": "A beautiful CLI for publishing and installing AI agents - npm for AI agents",
+  "version": "0.2.0",
+  "description": "A beautiful CLI for publishing and installing AI agents - npm for AI agents with private/public access control",
   "module": "index.ts",
   "type": "module",
   "bin": {

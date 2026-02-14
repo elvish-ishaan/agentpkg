@@ -12,6 +12,8 @@ import { createGeneralLimiter } from './middleware/rate-limit.js';
 import authRoutes from './routes/auth.routes.js';
 import orgsRoutes from './routes/orgs.routes.js';
 import agentsRoutes from './routes/agents.routes.js';
+import skillsRoutes from './routes/skills.routes.js';
+import invitationsRoutes from './routes/invitations.routes.js';
 
 export function createApp() {
   const app = express();
@@ -72,6 +74,8 @@ export function createApp() {
   app.use('/auth', authRoutes);
   app.use('/orgs', orgsRoutes);
   app.use('/agents', agentsRoutes);
+  app.use('/skills', skillsRoutes);
+  app.use('/invitations', invitationsRoutes);
 
   // 404 handler
   app.use(notFoundHandler);

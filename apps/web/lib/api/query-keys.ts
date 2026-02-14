@@ -24,6 +24,23 @@ export const queryKeys = {
       [...queryKeys.agents.lists(), 'org', orgName] as const,
   },
 
+  // Skill keys
+  skills: {
+    all: ['skills'] as const,
+    lists: () => [...queryKeys.skills.all, 'list'] as const,
+    list: (filters?: Record<string, any>) =>
+      [...queryKeys.skills.lists(), filters] as const,
+    details: () => [...queryKeys.skills.all, 'detail'] as const,
+    detail: (org: string, name: string) =>
+      [...queryKeys.skills.details(), org, name] as const,
+    versions: (org: string, name: string) =>
+      [...queryKeys.skills.detail(org, name), 'versions'] as const,
+    version: (org: string, name: string, version: string) =>
+      [...queryKeys.skills.versions(org, name), version] as const,
+    byOrg: (orgName: string) =>
+      [...queryKeys.skills.lists(), 'org', orgName] as const,
+  },
+
   // Organization keys
   orgs: {
     all: ['orgs'] as const,

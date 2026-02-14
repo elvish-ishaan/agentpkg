@@ -41,4 +41,27 @@ export const agentsApi = {
     const response = await apiClient.get('/agents')
     return response.data
   },
+
+  // Update agent access level
+  updateAgentAccess: async (
+    org: string,
+    name: string,
+    access: 'PRIVATE' | 'PUBLIC'
+  ): Promise<Agent> => {
+    const response = await apiClient.patch(`/agents/@${org}/${name}/access`, {
+      access,
+    })
+    return response.data
+  },
 }
+
+// Export individual functions for easier importing
+export const {
+  publish: publishAgent,
+  getAgent,
+  getAgentVersion,
+  listAgentVersions,
+  listOrgAgents,
+  listAllAgents,
+  updateAgentAccess,
+} = agentsApi

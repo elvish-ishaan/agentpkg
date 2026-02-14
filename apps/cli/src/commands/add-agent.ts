@@ -45,14 +45,14 @@ function parseAgentSpec(spec: string): {
   return { org, name: nameAndVersion };
 }
 
-export async function install() {
+export async function addAgent() {
   try {
-    // Get agent spec from arguments
-    const spec = process.argv[3];
+    // Get agent spec from arguments (now at index 4 due to "add agent" subcommand)
+    const spec = process.argv[4];
 
     if (!spec) {
       clack.cancel(
-        "Please specify an agent to install (e.g., agentpkg install @org/agent)",
+        "Please specify an agent to add (e.g., agentpkg add agent @org/agent)",
       );
       process.exit(1);
     }
@@ -79,14 +79,27 @@ export async function install() {
 
     spinner.stop("Agent info fetched");
 
-    // Download agent content
-    spinner.start("Downloading...");
-    const content = await downloadFile(agent.downloadUrl);
-    spinner.stop("Downloaded");
+    if (!agent.latestVersion) {
+      throw new Error("No version available for this agent");
+    }
+
+    // Get agent content (prefer direct content, fallback to download)
+    let content: string;
+    if (agent.latestVersion.content) {
+      // Content is included directly in the response
+      content = agent.latestVersion.content;
+    } else if (agent.latestVersion.downloadUrl) {
+      // Download from URL
+      spinner.start("Downloading...");
+      content = await downloadFile(agent.latestVersion.downloadUrl);
+      spinner.stop("Downloaded");
+    } else {
+      throw new Error("No content or download URL available");
+    }
 
     // Verify checksum
     spinner.start("Verifying checksum...");
-    const checksumValid = verifyChecksum(content, agent.checksum);
+    const checksumValid = verifyChecksum(content, agent.latestVersion.checksum);
 
     if (!checksumValid) {
       spinner.stop("Checksum verification failed");
@@ -103,7 +116,7 @@ export async function install() {
     writeAgentFile(installPath, content);
 
     clack.outro(
-      `✓ Installed @${org}/${name}@${agent.version}\n   Location: ${installPath}`,
+      `✓ Installed @${org}/${name}@${agent.latestVersion.version}\n   Location: ${installPath}`,
     );
   } catch (error) {
     clack.cancel(formatError(error));
@@ -113,5 +126,5 @@ export async function install() {
 
 // Run if executed directly
 if (import.meta.main) {
-  await install();
+  await addAgent();
 }

@@ -10,6 +10,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Access {
+  PRIVATE
+  PUBLIC
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  EXPIRED
+  CANCELLED
+}
+
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
@@ -19,9 +31,10 @@ model User {
   updatedAt DateTime @updatedAt
 
   // Relations
-  ownedOrgs  Org[]        @relation("OrgOwner")
-  memberships OrgMember[]
-  apiTokens   ApiToken[]
+  ownedOrgs       Org[]            @relation("OrgOwner")
+  memberships     OrgMember[]
+  apiTokens       ApiToken[]
+  sentInvitations OrgInvitation[]  @relation("SentInvitations")
 
   @@map("users")
 }
@@ -34,9 +47,11 @@ model Org {
   updatedAt DateTime @updatedAt
 
   // Relations
-  owner   User        @relation("OrgOwner", fields: [ownerId], references: [id], onDelete: Cascade)
-  members OrgMember[]
-  agents  Agent[]
+  owner       User            @relation("OrgOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  members     OrgMember[]
+  agents      Agent[]
+  skills      Skill[]
+  invitations OrgInvitation[]
 
   @@index([ownerId])
   @@map("orgs")
@@ -67,6 +82,7 @@ model Agent {
   description   String?
   latestVersion String?
   downloads     Int      @default(0) // track download count
+  access        Access   @default(PRIVATE)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
@@ -76,6 +92,7 @@ model Agent {
 
   @@unique([orgId, name])
   @@index([orgId])
+  @@index([access])
   @@map("agents")
 }
 
@@ -97,6 +114,45 @@ model AgentVersion {
   @@map("agent_versions")
 }
 
+model Skill {
+  id            String   @id @default(cuid())
+  name          String
+  orgId         String
+  description   String?
+  latestVersion String?
+  downloads     Int      @default(0)
+  access        Access   @default(PRIVATE)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  org      Org            @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  versions SkillVersion[]
+
+  @@unique([orgId, name])
+  @@index([orgId])
+  @@index([access])
+  @@map("skills")
+}
+
+model SkillVersion {
+  id          String   @id @default(cuid())
+  skillId     String
+  version     String
+  content     String   @db.Text
+  checksum    String
+  gcsPath     String
+  publishedBy String?
+  createdAt   DateTime @default(now())
+
+  // Relations
+  skill Skill @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@unique([skillId, version])
+  @@index([skillId])
+  @@map("skill_versions")
+}
+
 model ApiToken {
   id         String    @id @default(cuid())
   userId     String
@@ -112,4 +168,28 @@ model ApiToken {
   @@index([userId])
   @@index([tokenHash])
   @@map("api_tokens")
+}
+
+model OrgInvitation {
+  id        String           @id @default(cuid())
+  orgId     String
+  email     String
+  role      String           @default("member")
+  token     String           @unique
+  invitedBy String
+  status    InvitationStatus @default(PENDING)
+  expiresAt DateTime
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  // Relations
+  org     Org  @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  inviter User @relation("SentInvitations", fields: [invitedBy], references: [id])
+
+  @@index([orgId])
+  @@index([email])
+  @@index([token])
+  @@index([status])
+  @@index([orgId, email, status])
+  @@map("org_invitations")
 }

@@ -3,10 +3,13 @@
 import { use } from 'react'
 import { useOrg } from '@/lib/hooks/use-orgs'
 import { useOrgAgents } from '@/lib/hooks/use-agents'
+import { useOrgSkills } from '@/lib/hooks/use-skills'
 import { OrgHeader } from '@/components/orgs/org-header'
 import { AgentCard } from '@/components/agents/agent-card'
+import { SkillCard } from '@/components/skills/skill-card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { AlertCircle } from 'lucide-react'
 
 interface OrgPageProps {
@@ -20,6 +23,7 @@ export default function OrgPage({ params }: OrgPageProps) {
 
   const { data: org, isLoading: orgLoading, error: orgError } = useOrg(orgName)
   const { data: agents, isLoading: agentsLoading } = useOrgAgents(orgName)
+  const { data: skills, isLoading: skillsLoading } = useOrgSkills(orgName)
 
   if (orgLoading) {
     return (
@@ -57,30 +61,56 @@ export default function OrgPage({ params }: OrgPageProps) {
       <OrgHeader org={org} />
 
       <div className="container px-4 py-8">
-        <div className="mb-6">
-          <h2 className="text-2xl font-bold">Agents</h2>
-          <p className="text-muted-foreground mt-1">
-            {agents?.length || 0} published {agents?.length === 1 ? 'agent' : 'agents'}
-          </p>
-        </div>
+        <Tabs defaultValue="agents" className="w-full">
+          <TabsList>
+            <TabsTrigger value="agents">
+              Agents ({agents?.length || 0})
+            </TabsTrigger>
+            <TabsTrigger value="skills">
+              Skills ({skills?.length || 0})
+            </TabsTrigger>
+          </TabsList>
 
-        {agentsLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <Skeleton key={i} className="h-[180px] w-full" />
-            ))}
-          </div>
-        ) : agents && agents.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {agents.map((agent) => (
-              <AgentCard key={agent.id} agent={agent} />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-12 bg-muted/30 rounded-lg">
-            <p className="text-muted-foreground">No agents published yet</p>
-          </div>
-        )}
+          <TabsContent value="agents" className="mt-6">
+            {agentsLoading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <Skeleton key={i} className="h-[180px] w-full" />
+                ))}
+              </div>
+            ) : agents && agents.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {agents.map((agent) => (
+                  <AgentCard key={agent.id} agent={agent} />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12 bg-muted/30 rounded-lg">
+                <p className="text-muted-foreground">No agents published yet</p>
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="skills" className="mt-6">
+            {skillsLoading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <Skeleton key={i} className="h-[180px] w-full" />
+                ))}
+              </div>
+            ) : skills && skills.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {skills.map((skill) => (
+                  <SkillCard key={skill.id} skill={skill} />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12 bg-muted/30 rounded-lg">
+                <p className="text-muted-foreground">No skills published yet</p>
+              </div>
+            )}
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   )

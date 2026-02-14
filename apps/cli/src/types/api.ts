@@ -27,18 +27,25 @@ export interface Agent {
   id: string;
   orgId: string;
   name: string;
-  version: string;
   description: string | null;
-  content: string;
-  checksum: string;
-  downloadUrl: string;
-  publishedBy: string;
+  downloads?: number;
+  access?: 'PRIVATE' | 'PUBLIC';
   createdAt: string;
+  updatedAt: string;
   org?: {
+    id: string;
     name: string;
   };
-  publisher?: {
-    username: string;
+  latestVersion?: {
+    id: string;
+    agentId: string;
+    version: string;
+    content: string;
+    checksum: string;
+    downloadUrl: string;
+    publishedById: string;
+    createdAt: string;
+    updatedAt: string;
   };
 }
 
@@ -48,4 +55,44 @@ export interface AgentListItem {
   description: string | null;
   publishedAt: string;
   downloadUrl: string;
+}
+
+export interface Skill {
+  id: string;
+  name: string;
+  description?: string;
+  orgId: string;
+  downloads: number;
+  access?: 'PRIVATE' | 'PUBLIC';
+  createdAt: string;
+  updatedAt: string;
+  org: { id: string; name: string };
+  latestVersion?: { version: string };
+  versionCount?: number;
+}
+
+export interface SkillVersion {
+  id: string;
+  name: string;
+  description?: string;
+  orgId: string;
+  downloads?: number;
+  access?: 'PRIVATE' | 'PUBLIC';
+  createdAt: string;
+  updatedAt: string;
+  org?: {
+    id: string;
+    name: string;
+  };
+  latestVersion?: {
+    id: string;
+    skillId: string;
+    version: string;
+    content: string;
+    checksum: string;
+    downloadUrl: string;
+    publishedById: string;
+    createdAt: string;
+    updatedAt: string;
+  };
 }

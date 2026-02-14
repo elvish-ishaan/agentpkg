@@ -135,6 +135,7 @@ export class OrgService {
     return {
       id: org.id,
       name: org.name,
+      ownerId: org.ownerId,
       owner: org.owner,
       members: org.members.map((m) => ({
         id: m.id,

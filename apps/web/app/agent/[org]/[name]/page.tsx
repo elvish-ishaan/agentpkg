@@ -141,13 +141,13 @@ export default function AgentPage({ params }: AgentPageProps) {
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Published</p>
                   <p className="text-sm">
-                    {formatDistanceToNow(new Date(agent.createdAt), { addSuffix: true })}
+                    {agent.createdAt ? formatDistanceToNow(new Date(agent.createdAt), { addSuffix: true }) : 'N/A'}
                   </p>
                 </div>
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Last Updated</p>
                   <p className="text-sm">
-                    {formatDistanceToNow(new Date(agent.updatedAt), { addSuffix: true })}
+                    {agent.updatedAt ? formatDistanceToNow(new Date(agent.updatedAt), { addSuffix: true }) : 'N/A'}
                   </p>
                 </div>
               </CardContent>

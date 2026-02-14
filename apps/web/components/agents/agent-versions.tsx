@@ -54,7 +54,7 @@ export function AgentVersions({ versions, orgName, agentName, latestVersion }: A
                   {version.publishedBy?.username || 'Unknown'}
                 </TableCell>
                 <TableCell className="text-muted-foreground">
-                  {formatDistanceToNow(new Date(version.createdAt), { addSuffix: true })}
+                  {version.createdAt ? formatDistanceToNow(new Date(version.createdAt), { addSuffix: true }) : 'N/A'}
                 </TableCell>
               </TableRow>
             ))}

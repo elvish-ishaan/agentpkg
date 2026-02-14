@@ -29,6 +29,9 @@ export const publishAgentSchema = z.object({
     .string()
     .regex(/^[a-f0-9]{64}$/, 'Invalid checksum format (must be SHA-256 hex)')
     .optional(),
+  access: z
+    .enum(['PRIVATE', 'PUBLIC'])
+    .optional(),
 });
 
 /**

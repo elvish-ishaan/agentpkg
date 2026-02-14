@@ -4,6 +4,46 @@ import { orgService } from '../services/org.service.js';
 import { UnauthorizedError, ForbiddenError } from '../utils/errors.js';
 
 /**
+ * Middleware to optionally attach user if authenticated (doesn't fail if not)
+ */
+export async function optionalAuth(req: Request, _res: Response, next: NextFunction) {
+  try {
+    let token: string | undefined;
+
+    // Check Authorization header first
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      token = authHeader.substring(7); // Remove 'Bearer ' prefix
+    }
+
+    // Fallback to cookie if no Authorization header
+    if (!token && req.cookies?.auth_token) {
+      token = req.cookies.auth_token;
+    }
+
+    // If no token, just continue without auth
+    if (!token) {
+      next();
+      return;
+    }
+
+    // Try to validate token, but don't fail if invalid
+    try {
+      const { user, tokenId } = await authService.validateToken(token);
+      req.user = user;
+      req.tokenId = tokenId;
+    } catch (error) {
+      // Invalid token, but that's okay - just continue without user
+    }
+
+    next();
+  } catch (error) {
+    // On any error, just continue without user
+    next();
+  }
+}
+
+/**
  * Middleware to require authentication
  */
 export async function requireAuth(req: Request, _res: Response, next: NextFunction) {

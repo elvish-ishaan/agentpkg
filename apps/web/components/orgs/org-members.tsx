@@ -72,7 +72,9 @@ export function OrgMembers({ members, orgName, isOwner, currentUserId }: OrgMemb
                   </Badge>
                 </TableCell>
                 <TableCell className="text-muted-foreground">
-                  {formatDistanceToNow(new Date(member.createdAt), { addSuffix: true })}
+                  {member.createdAt
+                    ? formatDistanceToNow(new Date(member.createdAt), { addSuffix: true })
+                    : 'Unknown'}
                 </TableCell>
                 {isOwner && (
                   <TableCell>

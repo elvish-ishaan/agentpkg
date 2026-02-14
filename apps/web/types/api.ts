@@ -12,10 +12,15 @@ export interface Org {
   id: string
   name: string
   createdAt: string
-  updatedAt: string
+  updatedAt?: string
   ownerId: string
+  owner?: {
+    id: string
+    username: string
+  }
   members?: OrgMember[]
   agents?: Agent[]
+  agentCount?: number
 }
 
 export interface OrgMember {
@@ -34,6 +39,7 @@ export interface Agent {
   description: string
   orgId: string
   downloads?: number
+  access?: 'PRIVATE' | 'PUBLIC'
   createdAt: string
   updatedAt: string
   org?: Org
@@ -51,6 +57,33 @@ export interface AgentVersion {
   updatedAt: string
   publishedBy?: User
   agent?: Agent
+}
+
+// Skill types
+export interface Skill {
+  id: string
+  name: string
+  description?: string
+  orgId: string
+  downloads?: number
+  access?: 'PRIVATE' | 'PUBLIC'
+  createdAt: string
+  updatedAt: string
+  org?: Org
+  versions?: SkillVersion[]
+  latestVersion?: SkillVersion
+}
+
+export interface SkillVersion {
+  id: string
+  skillId: string
+  version: string
+  content: string
+  publishedById: string
+  createdAt: string
+  updatedAt: string
+  publishedBy?: User
+  skill?: Skill
 }
 
 // API Token types
@@ -84,6 +117,14 @@ export interface PublishAgentData {
   name: string
   version: string
   description: string
+  content: string
+}
+
+export interface PublishSkillData {
+  orgName: string
+  name: string
+  version: string
+  description?: string
   content: string
 }
 

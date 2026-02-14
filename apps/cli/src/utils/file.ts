@@ -1,5 +1,5 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { dirname } from "node:path";
+import { dirname, join } from "node:path";
 
 /**
  * Read agent file from disk
@@ -43,4 +43,27 @@ export function formatFileSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+/**
+ * Read skill file from disk (directory structure: <skill_name>/SKILL.md)
+ */
+export function readSkillFile(skillDir: string): string {
+  const skillPath = join(skillDir, "SKILL.md");
+  if (!existsSync(skillPath)) {
+    throw new Error(`No SKILL.md file found in ${skillDir}`);
+  }
+  return readFileSync(skillPath, "utf-8");
+}
+
+/**
+ * Write skill file to disk (creates directory structure: <skill_name>/SKILL.md)
+ */
+export function writeSkillFile(skillDir: string, content: string): void {
+  // Ensure skill directory exists
+  ensureDirectory(skillDir);
+
+  // Write SKILL.md inside the directory
+  const skillPath = join(skillDir, "SKILL.md");
+  writeFileSync(skillPath, content, "utf-8");
 }

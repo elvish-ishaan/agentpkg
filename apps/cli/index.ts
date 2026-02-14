@@ -25,10 +25,6 @@ try {
       await import("./src/commands/login.js").then((m) => m.login());
       break;
 
-    case "register":
-      await import("./src/commands/register.js").then((m) => m.register());
-      break;
-
     case "logout":
       await import("./src/commands/logout.js").then((m) => m.logout());
       break;
@@ -37,16 +33,22 @@ try {
       await import("./src/commands/whoami.js").then((m) => m.whoami());
       break;
 
-    case "init":
-      await import("./src/commands/init.js").then((m) => m.init());
-      break;
-
     case "publish":
       await import("./src/commands/publish.js").then((m) => m.publish());
       break;
 
+    case "update-access":
+      await import("./src/commands/update-access.js").then((m) => m.updateAccess());
+      break;
+
+    case "add":
+      await import("./src/commands/add.js").then((m) => m.add());
+      break;
+
     case "install":
-      await import("./src/commands/install.js").then((m) => m.install());
+      console.warn("⚠ 'install' is deprecated. Use 'add agent' instead.");
+      process.argv.splice(2, 1, "add", "agent");
+      await import("./src/commands/add.js").then((m) => m.add());
       break;
 
     case "list":

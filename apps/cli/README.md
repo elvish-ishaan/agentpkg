@@ -11,10 +11,12 @@ AgentPKG CLI provides an intuitive way to share and discover AI agents. Publish 
 ## Features
 
 - 🚀 **Easy Publishing**: Publish agents with interactive prompts or CI/CD-ready flags
+- 🔒 **Private by Default**: All agents/skills are private to your org unless you make them public
 - 📦 **Simple Installation**: Install agents to `.github/agents/` with one command
 - 🎨 **Beautiful UI**: Modern terminal experience powered by Clack
 - 🔐 **Secure**: Token-based authentication with checksums for verification
 - 🏢 **Organizations**: Manage multiple organizations and team agents
+- ✉️ **Team Invitations**: Invite team members via email
 - ⚡ **Fast**: Built with Bun for speed
 
 ## Installation
@@ -150,7 +152,7 @@ The template includes frontmatter for metadata and a basic instruction structure
 
 #### `agentpkg publish`
 
-Publish an agent to the registry.
+Publish an agent to the registry. **All agents are private by default** (only org members can view/install).
 
 **Interactive mode** (default):
 
@@ -167,11 +169,15 @@ $ agentpkg publish
 ◆  Agent name: my-awesome-agent
 ◆  Version: 1.0.0
 ◆  Description (optional): An awesome AI agent
+◆  Access level:
+│  ● Private (org members only)
+│  ○ Public (anyone can view)
 │
 ├  Details:
 │  • Organization: @myorg
 │  • Name: my-awesome-agent
 │  • Version: 1.0.0
+│  • Access: Private
 │  • Size: 12.5 KB
 │  • Checksum: a3f7b2c1...
 │
@@ -183,7 +189,11 @@ $ agentpkg publish
 **Non-interactive mode** (for CI/CD):
 
 ```bash
+# Publish as private (default)
 $ agentpkg publish --org myorg --name myagent --version 1.0.0 --yes
+
+# Publish as public
+$ agentpkg publish --org myorg --name myagent --version 1.0.0 --access public --yes
 ```
 
 Options:
@@ -191,7 +201,12 @@ Options:
 - `--name <name>`: Agent name (required)
 - `--version <version>`: Version in semver format (required)
 - `--description <desc>`: Agent description (optional)
+- `--access <level>`: Access level - `private` (default) or `public`
 - `--yes`: Skip all prompts
+
+**Access Levels:**
+- **Private** (default): Only organization members can view and install
+- **Public**: Anyone can view and install
 
 #### `agentpkg install <@org/agent>`
 
@@ -236,6 +251,43 @@ $ agentpkg list acme
     Another awesome agent
     Published: 1/2/2026
 ```
+
+#### `agentpkg update-access`
+
+Change the access level of a published agent or skill. **Only organization owners can update access levels.**
+
+**Interactive mode** (default):
+
+```bash
+$ agentpkg update-access agent
+┌  Update Agent Access
+│
+◆  Select organization: myorg
+◆  Agent name: my-awesome-agent
+◆  New access level:
+│  ● Private (org members only)
+│  ○ Public (anyone can view)
+│
+◆  Update @myorg/my-awesome-agent access to private? Yes
+│
+└  ✓ Updated @myorg/my-awesome-agent access to private
+```
+
+**Non-interactive mode** (for CI/CD):
+
+```bash
+# Make an agent public
+$ agentpkg update-access agent --org myorg --name myagent --access public --yes
+
+# Make a skill private
+$ agentpkg update-access skill --org myorg --name myskill --access private --yes
+```
+
+Options:
+- `--org <name>`: Organization name (required)
+- `--name <name>`: Agent/skill name (required)
+- `--access <level>`: New access level - `private` or `public` (required)
+- `--yes`: Skip confirmation prompt
 
 ### Organization Management
 
@@ -308,6 +360,47 @@ agentpkg login
         └── agent2.agent.md
 ```
 
+## Access Control
+
+AgentPKG supports **private and public agents/skills** to protect your organization's intellectual property.
+
+### Default Behavior
+
+- **All agents/skills are private by default** when published
+- Only organization members can view and install private content
+- Public content is visible to everyone
+
+### Making Content Public
+
+```bash
+# Publish as public
+agentpkg publish agent --access public
+
+# Or change after publishing (owners only)
+agentpkg update-access agent --org myorg --name myagent --access public
+```
+
+### Use Cases
+
+**Private (Default):**
+- Internal company agents
+- Work-in-progress agents
+- Proprietary automation
+- Team-specific tools
+
+**Public:**
+- Open-source agents
+- Community contributions
+- Educational examples
+- Public utilities
+
+### ⚠️ Important: Version 0.2.0 Breaking Change
+
+If you're upgrading from version 0.1.0:
+- **All existing agents/skills are now private by default**
+- Use `agentpkg update-access` to make them public if needed
+- Or use the web UI to toggle access levels
+
 ## Agent File Format
 
 Agent files use markdown with YAML frontmatter:
@@ -352,12 +445,31 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: oven-sh/setup-bun@v1
-      - run: bun install -g agentpkg
+      - run: bun install -g @agentpkg/cli
       - run: |
-          agentpkg publish \
+          agentpkg publish agent \
             --org myorg \
             --name myagent \
             --version ${GITHUB_REF#refs/tags/v} \
+            --access private \
+            --yes
+        env:
+          AGENTPKG_API_URL: https://api.agentpkg.com
+
+# For public agents
+jobs:
+  publish-public:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: oven-sh/setup-bun@v1
+      - run: bun install -g @agentpkg/cli
+      - run: |
+          agentpkg publish agent \
+            --org myorg \
+            --name myagent \
+            --version ${GITHUB_REF#refs/tags/v} \
+            --access public \
             --yes
         env:
           AGENTPKG_API_URL: https://api.agentpkg.com

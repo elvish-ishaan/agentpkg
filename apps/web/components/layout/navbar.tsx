@@ -41,10 +41,10 @@ export function Navbar() {
             Agents
           </Link>
           <Link
-            href="/orgs"
+            href="/skill"
             className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
           >
-            Organizations
+            Skills
           </Link>
 
           {/* Auth Section */}

@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Lock } from 'lucide-react'
 import type { Agent } from '@/types/api'
 import { formatDistanceToNow } from 'date-fns'
 
@@ -12,6 +13,7 @@ interface AgentCardProps {
 export function AgentCard({ agent }: AgentCardProps) {
   const orgName = agent.org?.name || 'unknown'
   const latestVersion = agent.latestVersion?.version || '0.0.0'
+  const isPrivate = agent.access === 'PRIVATE'
 
   return (
     <Link href={`/agent/${orgName}/${agent.name}`}>
@@ -25,15 +27,21 @@ export function AgentCard({ agent }: AgentCardProps) {
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
-                <CardTitle className="text-lg truncate">
-                  @{orgName}/{agent.name}
+                <CardTitle className="flex items-center gap-2 text-lg truncate">
+                  <span className="truncate">@{orgName}/{agent.name}</span>
+                  {isPrivate && <Lock className="h-4 w-4 text-muted-foreground flex-shrink-0" />}
                 </CardTitle>
                 <CardDescription className="flex items-center gap-2 mt-1">
                   <Badge variant="secondary" className="text-xs">
                     v{latestVersion}
                   </Badge>
+                  {isPrivate && (
+                    <Badge variant="outline" className="text-xs">
+                      Private
+                    </Badge>
+                  )}
                   <span className="text-xs">
-                    Updated {formatDistanceToNow(new Date(agent.updatedAt), { addSuffix: true })}
+                    Updated {agent.updatedAt ? formatDistanceToNow(new Date(agent.updatedAt), { addSuffix: true }) : 'recently'}
                   </span>
                 </CardDescription>
               </div>

@@ -15,3 +15,9 @@ export const INSTALL_DIR = ".github/agents";
 
 // Agent filename
 export const AGENT_FILENAME = "agent.agent.md";
+
+// Install directory for skills (.github/skills)
+export const SKILLS_INSTALL_DIR = ".github/skills";
+
+// Skill filename
+export const SKILL_FILENAME = "SKILL.md";

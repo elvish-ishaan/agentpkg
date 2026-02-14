@@ -1,7 +1,8 @@
 import { PrismaClient } from '@prisma/client';
-import { NotFoundError, ConflictError, BadRequestError } from '../utils/errors.js';
+import { NotFoundError, ConflictError, BadRequestError, ForbiddenError } from '../utils/errors.js';
 import { isValidName, isValidSemver, calculateChecksum } from '../utils/crypto.js';
 import { storageService } from './storage.service.js';
+import { logger } from '../utils/logger.js';
 
 const prisma = new PrismaClient();
 
@@ -12,6 +13,7 @@ export interface PublishAgentInput {
   content: string;
   description?: string;
   publishedBy: string;
+  access?: 'PRIVATE' | 'PUBLIC';
 }
 
 export class AgentService {
@@ -19,7 +21,7 @@ export class AgentService {
    * Publish a new agent version
    */
   async publishAgent(input: PublishAgentInput) {
-    const { orgName, agentName, version, content, description, publishedBy } = input;
+    const { orgName, agentName, version, content, description, publishedBy, access } = input;
 
     // Validate agent name
     if (!isValidName(agentName)) {
@@ -65,6 +67,7 @@ export class AgentService {
           name: agentName,
           orgId: org.id,
           description,
+          access: access || 'PRIVATE',
         },
       });
     }
@@ -122,9 +125,34 @@ export class AgentService {
   }
 
   /**
+   * Update agent access level
+   */
+  async updateAgentAccess(
+    orgName: string,
+    agentName: string,
+    access: 'PRIVATE' | 'PUBLIC'
+  ) {
+    const agent = await prisma.agent.findFirst({
+      where: {
+        org: { name: orgName },
+        name: agentName
+      },
+    });
+
+    if (!agent) {
+      throw new NotFoundError('Agent not found');
+    }
+
+    return await prisma.agent.update({
+      where: { id: agent.id },
+      data: { access },
+    });
+  }
+
+  /**
    * Get agent with latest version
    */
-  async getAgent(orgName: string, agentName: string) {
+  async getAgent(orgName: string, agentName: string, userId?: string) {
     const agent = await prisma.agent.findFirst({
       where: {
         org: { name: orgName },
@@ -133,10 +161,7 @@ export class AgentService {
       include: {
         org: {
           select: {
-            id: true,
             name: true,
-            createdAt: true,
-            updatedAt: true,
           },
         },
       },
@@ -144,6 +169,24 @@ export class AgentService {
 
     if (!agent) {
       throw new NotFoundError('Agent not found');
+    }
+
+    // Access control check
+    if (agent.access === 'PRIVATE') {
+      if (!userId) {
+        throw new ForbiddenError('This agent is private');
+      }
+
+      const isMember = await prisma.orgMember.findFirst({
+        where: {
+          orgId: agent.orgId,
+          userId,
+        },
+      });
+
+      if (!isMember) {
+        throw new ForbiddenError('You do not have access to this agent');
+      }
     }
 
     if (!agent.latestVersion) {
@@ -162,32 +205,49 @@ export class AgentService {
       throw new NotFoundError('Latest version not found');
     }
 
-    // Generate signed URL
-    const downloadUrl = await storageService.getSignedUrl(latestVersion.gcsPath);
+    // Increment download counter
+    const updatedAgent = await prisma.agent.update({
+      where: { id: agent.id },
+      data: {
+        downloads: {
+          increment: 1,
+        },
+      },
+    });
 
+    // Generate signed URL (but make it optional for development)
+    let downloadUrl = '';
+    try {
+      downloadUrl = await storageService.getSignedUrl(latestVersion.gcsPath);
+    } catch (error) {
+      // GCS might not be configured in development, fallback to content
+      logger.warn({ error }, 'Failed to generate signed URL, will use content directly');
+    }
+
+    // Return full agent structure with nested objects
     return {
       id: agent.id,
       name: agent.name,
       description: agent.description,
       orgId: agent.orgId,
-      downloads: agent.downloads || 0,
+      downloads: updatedAgent.downloads,
+      access: agent.access,
       createdAt: agent.createdAt,
       updatedAt: agent.updatedAt,
       org: {
-        id: agent.org.id,
+        id: agent.org.name,
         name: agent.org.name,
-        createdAt: agent.org.createdAt,
-        updatedAt: agent.org.updatedAt,
       },
       latestVersion: {
         id: latestVersion.id,
+        agentId: latestVersion.agentId,
         version: latestVersion.version,
         content: latestVersion.content,
         checksum: latestVersion.checksum,
-        gcsPath: latestVersion.gcsPath,
         downloadUrl,
+        publishedById: latestVersion.publishedBy || '',
         createdAt: latestVersion.createdAt,
-        publishedBy: latestVersion.publishedBy,
+        updatedAt: latestVersion.createdAt,
       },
     };
   }
@@ -195,7 +255,7 @@ export class AgentService {
   /**
    * Get specific agent version
    */
-  async getAgentVersion(orgName: string, agentName: string, version: string) {
+  async getAgentVersion(orgName: string, agentName: string, version: string, userId?: string) {
     const agentVersion = await prisma.agentVersion.findFirst({
       where: {
         agent: {
@@ -221,17 +281,68 @@ export class AgentService {
       throw new NotFoundError('Agent version not found');
     }
 
-    // Generate signed URL
-    const downloadUrl = await storageService.getSignedUrl(agentVersion.gcsPath);
+    // Access control check
+    if (agentVersion.agent.access === 'PRIVATE') {
+      if (!userId) {
+        throw new ForbiddenError('This agent is private');
+      }
 
+      const isMember = await prisma.orgMember.findFirst({
+        where: {
+          orgId: agentVersion.agent.orgId,
+          userId,
+        },
+      });
+
+      if (!isMember) {
+        throw new ForbiddenError('You do not have access to this agent');
+      }
+    }
+
+    // Increment download counter
+    const updatedAgent = await prisma.agent.update({
+      where: { id: agentVersion.agent.id },
+      data: {
+        downloads: {
+          increment: 1,
+        },
+      },
+    });
+
+    // Generate signed URL (but make it optional for development)
+    let downloadUrl = '';
+    try {
+      downloadUrl = await storageService.getSignedUrl(agentVersion.gcsPath);
+    } catch (error) {
+      // GCS might not be configured in development, fallback to content
+      logger.warn({ error }, 'Failed to generate signed URL, will use content directly');
+    }
+
+    // Return full agent structure with nested objects
     return {
-      org: agentVersion.agent.org.name,
+      id: agentVersion.agent.id,
       name: agentVersion.agent.name,
       description: agentVersion.agent.description,
-      version: agentVersion.version,
-      checksum: agentVersion.checksum,
-      downloadUrl,
-      publishedAt: agentVersion.createdAt,
+      orgId: agentVersion.agent.orgId,
+      downloads: updatedAgent.downloads,
+      access: agentVersion.agent.access,
+      createdAt: agentVersion.agent.createdAt,
+      updatedAt: agentVersion.agent.updatedAt,
+      org: {
+        id: agentVersion.agent.org.name,
+        name: agentVersion.agent.org.name,
+      },
+      latestVersion: {
+        id: agentVersion.id,
+        agentId: agentVersion.agentId,
+        version: agentVersion.version,
+        content: agentVersion.content,
+        checksum: agentVersion.checksum,
+        downloadUrl,
+        publishedById: agentVersion.publishedBy || '',
+        createdAt: agentVersion.createdAt,
+        updatedAt: agentVersion.createdAt,
+      },
     };
   }
 
@@ -317,14 +428,14 @@ export class AgentService {
   }
 
   /**
-   * List all public agents (agents with at least one published version)
+   * List all agents (public + user's private agents if authenticated)
    */
-  async listAllAgents() {
-    const agents = await prisma.agent.findMany({
+  async listAllAgents(userId?: string) {
+    // Get all public agents
+    const publicAgents = await prisma.agent.findMany({
       where: {
-        latestVersion: {
-          not: null,
-        },
+        latestVersion: { not: null },
+        access: 'PUBLIC',
       },
       orderBy: {
         downloads: 'desc',
@@ -344,12 +455,49 @@ export class AgentService {
       },
     });
 
-    return agents.map((agent) => ({
+    // If authenticated, also get user's private agents from their orgs
+    let privateAgents: any[] = [];
+    if (userId) {
+      const memberships = await prisma.orgMember.findMany({
+        where: { userId },
+        select: { orgId: true },
+      });
+
+      if (memberships.length > 0) {
+        privateAgents = await prisma.agent.findMany({
+          where: {
+            latestVersion: { not: null },
+            access: 'PRIVATE',
+            orgId: { in: memberships.map(m => m.orgId) },
+          },
+          orderBy: {
+            downloads: 'desc',
+          },
+          include: {
+            org: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+            _count: {
+              select: {
+                versions: true,
+              },
+            },
+          },
+        });
+      }
+    }
+
+    // Combine and format
+    return [...publicAgents, ...privateAgents].map((agent) => ({
       id: agent.id,
       name: agent.name,
       description: agent.description,
       orgId: agent.orgId,
       downloads: agent.downloads || 0,
+      access: agent.access,
       createdAt: agent.createdAt,
       updatedAt: agent.updatedAt,
       org: {
