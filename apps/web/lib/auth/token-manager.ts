@@ -23,5 +23,12 @@ export async function getAuthToken(): Promise<string | undefined> {
 
 export async function removeAuthToken() {
   const cookieStore = await cookies()
-  cookieStore.delete(TOKEN_NAME)
+  // Explicitly set cookie with maxAge: 0 to ensure deletion with same config as when set
+  cookieStore.set(TOKEN_NAME, '', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    maxAge: 0, // Expire immediately
+    path: '/',
+  })
 }

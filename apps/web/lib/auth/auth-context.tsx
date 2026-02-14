@@ -23,10 +23,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter()
   const queryClient = useQueryClient()
 
-  // Check if we have a token cookie before fetching user
-  const hasToken = typeof document !== 'undefined' && document.cookie.includes('auth_token=')
-
-  // Fetch current user only if token exists
+  // Fetch current user - will fail gracefully if no token exists
   const {
     data: user,
     isLoading,
@@ -36,7 +33,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     queryFn: authApi.me,
     retry: false,
     staleTime: 5 * 60 * 1000, // 5 minutes
-    enabled: hasToken, // Only fetch if token exists
+    enabled: true, // Always attempt to fetch - API will return 401 if no valid token
   })
 
   // Login mutation
@@ -68,7 +65,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Logout function
   const logout = async () => {
     await removeAuthToken()
-    queryClient.clear()
+    queryClient.invalidateQueries({ queryKey: queryKeys.auth.me() })
+    router.refresh() // Force middleware to re-run and see cookie is gone
     router.push('/')
   }
 

@@ -133,7 +133,10 @@ export class AgentService {
       include: {
         org: {
           select: {
+            id: true,
             name: true,
+            createdAt: true,
+            updatedAt: true,
           },
         },
       },
@@ -163,13 +166,29 @@ export class AgentService {
     const downloadUrl = await storageService.getSignedUrl(latestVersion.gcsPath);
 
     return {
-      org: agent.org.name,
+      id: agent.id,
       name: agent.name,
       description: agent.description,
-      version: latestVersion.version,
-      checksum: latestVersion.checksum,
-      downloadUrl,
-      publishedAt: latestVersion.createdAt,
+      orgId: agent.orgId,
+      downloads: agent.downloads || 0,
+      createdAt: agent.createdAt,
+      updatedAt: agent.updatedAt,
+      org: {
+        id: agent.org.id,
+        name: agent.org.name,
+        createdAt: agent.org.createdAt,
+        updatedAt: agent.org.updatedAt,
+      },
+      latestVersion: {
+        id: latestVersion.id,
+        version: latestVersion.version,
+        content: latestVersion.content,
+        checksum: latestVersion.checksum,
+        gcsPath: latestVersion.gcsPath,
+        downloadUrl,
+        createdAt: latestVersion.createdAt,
+        publishedBy: latestVersion.publishedBy,
+      },
     };
   }
 
@@ -231,9 +250,11 @@ export class AgentService {
             createdAt: 'desc',
           },
           select: {
+            id: true,
             version: true,
             checksum: true,
             createdAt: true,
+            publishedBy: true,
           },
         },
       },
@@ -243,13 +264,13 @@ export class AgentService {
       throw new NotFoundError('Agent not found');
     }
 
-    return {
-      org: orgName,
-      name: agentName,
-      description: agent.description,
-      latestVersion: agent.latestVersion,
-      versions: agent.versions,
-    };
+    return agent.versions.map((version) => ({
+      id: version.id,
+      version: version.version,
+      checksum: version.checksum,
+      createdAt: version.createdAt,
+      publishedBy: version.publishedBy,
+    }));
   }
 
   /**
@@ -278,17 +299,68 @@ export class AgentService {
       throw new NotFoundError('Organization not found');
     }
 
-    return {
-      org: orgName,
-      agents: org.agents.map((agent) => ({
-        name: agent.name,
-        description: agent.description,
-        latestVersion: agent.latestVersion,
-        versionCount: agent._count.versions,
-        updatedAt: agent.updatedAt,
-        createdAt: agent.createdAt,
-      })),
-    };
+    return org.agents.map((agent) => ({
+      id: agent.id,
+      name: agent.name,
+      description: agent.description,
+      orgId: agent.orgId,
+      createdAt: agent.createdAt,
+      updatedAt: agent.updatedAt,
+      org: {
+        name: orgName,
+      },
+      latestVersion: agent.latestVersion ? {
+        version: agent.latestVersion,
+      } : undefined,
+      versionCount: agent._count.versions,
+    }));
+  }
+
+  /**
+   * List all public agents (agents with at least one published version)
+   */
+  async listAllAgents() {
+    const agents = await prisma.agent.findMany({
+      where: {
+        latestVersion: {
+          not: null,
+        },
+      },
+      orderBy: {
+        downloads: 'desc',
+      },
+      include: {
+        org: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        _count: {
+          select: {
+            versions: true,
+          },
+        },
+      },
+    });
+
+    return agents.map((agent) => ({
+      id: agent.id,
+      name: agent.name,
+      description: agent.description,
+      orgId: agent.orgId,
+      downloads: agent.downloads || 0,
+      createdAt: agent.createdAt,
+      updatedAt: agent.updatedAt,
+      org: {
+        id: agent.org.id,
+        name: agent.org.name,
+      },
+      latestVersion: agent.latestVersion ? {
+        version: agent.latestVersion,
+      } : undefined,
+      versionCount: agent._count.versions,
+    }));
   }
 }
 

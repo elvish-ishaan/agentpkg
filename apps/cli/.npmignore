@@ -1,0 +1,26 @@
+# Development files
+*.test.ts
+*.spec.ts
+.github/
+node_modules/
+bun.lockb
+
+# Build artifacts
+dist/
+build/
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Misc
+coverage/
+.env
+.env.*

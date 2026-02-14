@@ -33,6 +33,7 @@ export interface Agent {
   name: string
   description: string
   orgId: string
+  downloads?: number
   createdAt: string
   updatedAt: string
   org?: Org

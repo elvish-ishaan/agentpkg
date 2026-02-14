@@ -1,5 +1,9 @@
 # AgentPKG CLI
 
+[![npm version](https://badge.fury.io/js/%40agentpkg%2Fcli.svg)](https://www.npmjs.com/package/@agentpkg/cli)
+[![npm downloads](https://img.shields.io/npm/dm/@agentpkg/cli.svg)](https://www.npmjs.com/package/@agentpkg/cli)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 > A beautiful, npm-like command-line tool for publishing and installing AI agents
 
 AgentPKG CLI provides an intuitive way to share and discover AI agents. Publish your agents to the registry and install agents from others with simple commands.
@@ -15,13 +19,43 @@ AgentPKG CLI provides an intuitive way to share and discover AI agents. Publish 
 
 ## Installation
 
-```bash
-# Install globally with Bun
-bun install -g agentpkg
+### Prerequisites
 
-# Or link for local development
-cd apps/cli
+AgentPKG CLI requires [Bun](https://bun.sh) runtime. Install Bun first:
+
+```bash
+# Install Bun (macOS, Linux, WSL)
+curl -fsSL https://bun.sh/install | bash
+
+# Or on Windows with PowerShell
+powershell -c "irm bun.sh/install.ps1|iex"
+```
+
+### Install AgentPKG CLI
+
+```bash
+# Install globally from npm
+bun install -g @agentpkg/cli
+
+# Or use bunx to run without installing
+bunx @agentpkg/cli --help
+```
+
+### For Local Development
+
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/agentpkg.git
+cd agentpkg/apps/cli
+
+# Install dependencies
+bun install
+
+# Link for global usage
 bun link
+
+# Now you can use agentpkg globally
+agentpkg --help
 ```
 
 ## Quick Start
@@ -250,10 +284,16 @@ Configuration is stored in `~/.agentpkg/config.json`:
 ### Environment Variables
 
 - `AGENTPKG_API_URL`: Override the API base URL (default: `http://localhost:4000`)
+  - For production use, set this to your deployed API URL
 
 Example:
 ```bash
-export AGENTPKG_API_URL=https://api.agentpkg.com
+# Set API URL for production
+export AGENTPKG_API_URL=https://api.yourdomain.com
+
+# Or add to your shell profile (~/.bashrc, ~/.zshrc)
+echo 'export AGENTPKG_API_URL=https://api.yourdomain.com' >> ~/.zshrc
+
 agentpkg login
 ```
 
@@ -372,11 +412,30 @@ The CLI provides helpful error messages:
 - Checksums are verified during installation
 - HTTPS recommended for production API
 
+## Publishing to npm
+
+If you're a maintainer looking to publish this CLI to npm, see [PUBLISHING.md](./PUBLISHING.md) for detailed instructions.
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
 ## License
 
-MIT
+MIT - see [LICENSE](../../LICENSE) file for details
 
 ## Support
 
 - **Issues**: https://github.com/yourusername/agentpkg/issues
 - **Discussions**: https://github.com/yourusername/agentpkg/discussions
+- **npm Package**: https://www.npmjs.com/package/@agentpkg/cli
+
+## Changelog
+
+See [CHANGELOG.md](./CHANGELOG.md) for version history and updates.

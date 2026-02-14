@@ -152,4 +152,21 @@ router.get('/@:org', async (req, res, next) => {
   }
 });
 
+/**
+ * GET /agents
+ * List all public agents (agents with at least one published version)
+ */
+router.get('/', async (req, res, next) => {
+  try {
+    const agents = await agentService.listAllAgents();
+
+    res.status(200).json({
+      success: true,
+      data: agents,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
 export default router;

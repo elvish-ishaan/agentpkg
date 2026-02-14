@@ -1,12 +1,42 @@
 {
-  "name": "agentpkg",
+  "name": "@agentpkg/cli",
   "version": "0.1.0",
+  "description": "A beautiful CLI for publishing and installing AI agents - npm for AI agents",
   "module": "index.ts",
   "type": "module",
-  "private": true,
   "bin": {
     "agentpkg": "./index.ts"
   },
+  "keywords": [
+    "ai",
+    "agents",
+    "cli",
+    "package-manager",
+    "bun",
+    "ai-agents",
+    "agent-registry",
+    "claude",
+    "llm"
+  ],
+  "author": "Elvish Ishaan",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/elvish-ishaan/agentpkg.git",
+    "directory": "apps/cli"
+  },
+  "homepage": "https://github.com/elvish-ishaan/agentpkg#readme",
+  "bugs": {
+    "url": "https://github.com/elvish-ishaan/agentpkg/issues"
+  },
+  "engines": {
+    "bun": ">=1.0.0"
+  },
+  "files": [
+    "index.ts",
+    "src/**/*.ts",
+    "README.md"
+  ],
   "devDependencies": {
     "@types/bun": "latest",
     "@types/node": "^25.2.3"

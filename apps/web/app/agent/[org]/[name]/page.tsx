@@ -20,7 +20,10 @@ interface AgentPageProps {
 }
 
 export default function AgentPage({ params }: AgentPageProps) {
-  const { org, name } = use(params)
+  const { org: rawOrg, name } = use(params)
+
+  // Strip @ prefix since API client adds it back
+  const org = rawOrg.startsWith('@') ? rawOrg.slice(1) : rawOrg
 
   const { data: agent, isLoading: agentLoading, error: agentError } = useAgent(org, name)
   const { data: versions, isLoading: versionsLoading } = useAgentVersions(org, name)
@@ -95,6 +98,37 @@ export default function AgentPage({ params }: AgentPageProps) {
 
           {/* Sidebar */}
           <div className="space-y-4">
+            {/* Install Card */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Install</CardTitle>
+                <CardDescription>Use agentpkg CLI to install this agent</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="bg-muted p-3 rounded-md font-mono text-sm">
+                  <code>npx agentpkg install @{agent.org?.name}/{agent.name}</code>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Stats Card */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Statistics</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Downloads</p>
+                  <p className="text-2xl font-bold">{agent.downloads?.toLocaleString() || 0}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Latest Version</p>
+                  <p className="text-sm font-mono">{agent.latestVersion?.version || 'N/A'}</p>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Details Card */}
             <Card>
               <CardHeader>
                 <CardTitle>Details</CardTitle>
@@ -105,11 +139,7 @@ export default function AgentPage({ params }: AgentPageProps) {
                   <p className="text-sm">@{agent.org?.name}</p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Latest Version</p>
-                  <p className="text-sm font-mono">{agent.latestVersion?.version || 'N/A'}</p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Created</p>
+                  <p className="text-sm font-medium text-muted-foreground">Published</p>
                   <p className="text-sm">
                     {formatDistanceToNow(new Date(agent.createdAt), { addSuffix: true })}
                   </p>

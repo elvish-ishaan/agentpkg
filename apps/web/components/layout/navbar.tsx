@@ -35,7 +35,7 @@ export function Navbar() {
         {/* Navigation Links */}
         <nav className="flex items-center gap-6">
           <Link
-            href="/agents"
+            href="/agent"
             className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
           >
             Agents
