@@ -19,12 +19,14 @@ export function Navbar() {
   const { user, isAuthenticated, logout } = useAuth()
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center justify-between px-4">
+    <header className="sticky top-0 z-50 w-full border-b border-gray-800 bg-black/95 backdrop-blur supports-[backdrop-filter]:bg-black/80">
+      <div className="container flex h-16 items-center justify-between px-4 mx-auto max-w-7xl">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 font-bold text-xl">
-          <Package className="h-6 w-6" />
-          <span>AgentPkg</span>
+        <Link href="/" className="flex items-center gap-2 font-bold text-xl md:text-2xl">
+          <Package className="h-6 w-6 text-white" />
+          <span className="text-white" style={{ fontFamily: "'Della Respira', serif" }}>
+            AgentPkg
+          </span>
         </Link>
 
         {/* Search Bar */}
@@ -36,13 +38,13 @@ export function Navbar() {
         <nav className="flex items-center gap-6">
           <Link
             href="/agent"
-            className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+            className="text-sm font-medium text-gray-400 hover:text-white transition-colors"
           >
             Agents
           </Link>
           <Link
             href="/skill"
-            className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+            className="text-sm font-medium text-gray-400 hover:text-white transition-colors"
           >
             Skills
           </Link>
@@ -91,10 +93,10 @@ export function Navbar() {
               </DropdownMenu>
             ) : (
               <>
-                <Button asChild variant="ghost" size="sm">
+                <Button asChild variant="ghost" size="sm" className="text-white hover:bg-gray-800">
                   <Link href="/login">Login</Link>
                 </Button>
-                <Button asChild size="sm">
+                <Button asChild size="sm" className="bg-white text-black hover:bg-gray-200">
                   <Link href="/register">Sign up</Link>
                 </Button>
               </>
@@ -104,7 +106,7 @@ export function Navbar() {
       </div>
 
       {/* Mobile Search Bar */}
-      <div className="md:hidden border-t p-2">
+      <div className="md:hidden border-t border-gray-800 p-2">
         <SearchBar />
       </div>
     </header>

@@ -1,17 +1,29 @@
 import type { Metadata } from "next"
-import localFont from "next/font/local"
+import { Della_Respira, Actor, Merriweather } from "next/font/google"
 import "./globals.css"
 import { QueryProvider } from "@/lib/providers/query-provider"
 import { AuthProvider } from "@/lib/auth/auth-context"
 import { Toaster } from "@/components/ui/sonner"
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
+
+
+const dellaRespira = Della_Respira({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-della-respira",
+  display: "swap",
 })
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
+
+const actor = Actor({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-actor",
+})
+
+const merriweather = Merriweather({
+  weight: ["300", "400", "700"],
+  subsets: ["latin"],
+  variable: "--font-merriweather",
 })
 
 export const metadata: Metadata = {
@@ -26,7 +38,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}>
+      <body className={` ${dellaRespira.variable} ${actor.variable} ${merriweather.variable} font-sans antialiased`}>
         <QueryProvider>
           <AuthProvider>
             {children}

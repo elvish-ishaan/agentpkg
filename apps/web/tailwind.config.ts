@@ -10,6 +10,9 @@ const config: Config = {
       fontFamily: {
         sans: ['var(--font-geist-sans)'],
         mono: ['var(--font-geist-mono)'],
+        heading: ['var(--font-della-respira)', 'sans-serif'],
+        subheading: ['var(--font-actor)', 'sans-serif'],
+        body: ['var(--font-merriweather)', 'serif'],
       },
       colors: {
         border: 'hsl(var(--border))',

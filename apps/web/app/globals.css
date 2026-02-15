@@ -1,5 +1,6 @@
 
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Della+Respira&display=swap');
 
 @layer base {
   :root {
@@ -173,5 +174,22 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .hero-gradient {
+    background: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(120, 119, 198, 0.3), transparent),
+                radial-gradient(ellipse 60% 50% at 50% 120%, rgba(120, 119, 198, 0.2), transparent),
+                hsl(var(--background));
+  }
+
+  .glow-effect {
+    box-shadow: 0 0 20px rgba(120, 119, 198, 0.3),
+                0 0 40px rgba(120, 119, 198, 0.2);
+  }
+
+  .hero-overlay {
+    background: linear-gradient(to bottom, transparent 0%, hsl(var(--background)) 100%);
   }
 }
