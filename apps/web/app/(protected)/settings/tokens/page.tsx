@@ -129,32 +129,38 @@ export default function TokensPage() {
   return (
     <div className="container px-4 py-8 max-w-4xl">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold">API Tokens</h1>
-        <p className="text-muted-foreground mt-2">
+        <h1 className="text-3xl font-bold text-white" style={{ fontFamily: 'var(--font-della-respira)' }}>
+          API Tokens
+        </h1>
+        <p className="text-gray-400 mt-2 font-body">
           Manage your API tokens for programmatic access
         </p>
       </div>
 
-      <Card>
+      <Card className="bg-white/5 border-white/10 backdrop-blur-sm">
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle>Your API Tokens</CardTitle>
-              <CardDescription>
+              <CardTitle className="text-white" style={{ fontFamily: 'var(--font-della-respira)' }}>
+                Your API Tokens
+              </CardTitle>
+              <CardDescription className="text-gray-400 font-body">
                 Use these tokens to authenticate with the AgentPkg CLI
               </CardDescription>
             </div>
             <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger asChild>
-                <Button>
+                <Button className="bg-white text-black hover:bg-gray-200">
                   <Plus className="mr-2 h-4 w-4" />
                   Create Token
                 </Button>
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent className="bg-black/95 border-white/10 backdrop-blur-sm">
                 <DialogHeader>
-                  <DialogTitle>Create API Token</DialogTitle>
-                  <DialogDescription>
+                  <DialogTitle className="text-white" style={{ fontFamily: 'var(--font-della-respira)' }}>
+                    Create API Token
+                  </DialogTitle>
+                  <DialogDescription className="text-gray-400 font-body">
                     Create a new API token for programmatic access
                   </DialogDescription>
                 </DialogHeader>
@@ -162,22 +168,23 @@ export default function TokensPage() {
                 {newToken ? (
                   <div className="space-y-4">
                     <div>
-                      <p className="text-sm font-medium mb-2">Your new token:</p>
+                      <p className="text-sm font-medium mb-2 text-white font-body">Your new token:</p>
                       <div className="flex gap-2">
-                        <Input value={newToken} readOnly className="font-mono text-sm" />
+                        <Input value={newToken} readOnly className="font-mono text-sm bg-white/5 border-white/10 text-white" />
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => copyToken(newToken)}
+                          className="bg-white/10 border-white/20 text-white hover:bg-white/20"
                         >
                           <Copy className="h-4 w-4" />
                         </Button>
                       </div>
-                      <p className="text-sm text-muted-foreground mt-2">
+                      <p className="text-sm text-gray-400 mt-2 font-body">
                         Make sure to copy your token now. You won't be able to see it again!
                       </p>
                     </div>
-                    <Button onClick={handleCloseDialog} className="w-full">
+                    <Button onClick={handleCloseDialog} className="w-full bg-white text-black hover:bg-gray-200">
                       Done
                     </Button>
                   </div>
@@ -189,12 +196,13 @@ export default function TokensPage() {
                         name="name"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Token Name</FormLabel>
+                            <FormLabel className="text-white font-body">Token Name</FormLabel>
                             <FormControl>
                               <Input
                                 placeholder="My CLI Token"
                                 {...field}
                                 disabled={createToken.isPending}
+                                className="bg-white/5 border-white/10 text-white placeholder:text-gray-500"
                               />
                             </FormControl>
                             <FormMessage />
@@ -208,10 +216,11 @@ export default function TokensPage() {
                           variant="outline"
                           onClick={handleCloseDialog}
                           disabled={createToken.isPending}
+                          className="bg-white/10 border-white/20 text-white hover:bg-white/20"
                         >
                           Cancel
                         </Button>
-                        <Button type="submit" disabled={createToken.isPending}>
+                        <Button type="submit" disabled={createToken.isPending} className="bg-white text-black hover:bg-gray-200">
                           {createToken.isPending ? 'Creating...' : 'Create Token'}
                         </Button>
                       </div>
@@ -230,24 +239,24 @@ export default function TokensPage() {
               ))}
             </div>
           ) : tokens && tokens.length > 0 ? (
-            <div className="border rounded-lg">
+            <div className="border border-white/10 rounded-lg">
               <Table>
                 <TableHeader>
-                  <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Created</TableHead>
-                    <TableHead>Last Used</TableHead>
-                    <TableHead className="w-[100px]">Actions</TableHead>
+                  <TableRow className="border-white/10 hover:bg-white/5">
+                    <TableHead className="text-gray-400 font-body">Name</TableHead>
+                    <TableHead className="text-gray-400 font-body">Created</TableHead>
+                    <TableHead className="text-gray-400 font-body">Last Used</TableHead>
+                    <TableHead className="w-[100px] text-gray-400 font-body">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {tokens.map((token) => (
-                    <TableRow key={token.id}>
-                      <TableCell className="font-medium">{token.name}</TableCell>
-                      <TableCell className="text-muted-foreground">
+                    <TableRow key={token.id} className="border-white/10 hover:bg-white/5">
+                      <TableCell className="font-medium text-white font-body">{token.name}</TableCell>
+                      <TableCell className="text-gray-400 font-body">
                         {formatDistanceToNow(new Date(token.createdAt), { addSuffix: true })}
                       </TableCell>
-                      <TableCell className="text-muted-foreground">
+                      <TableCell className="text-gray-400 font-body">
                         {token.lastUsedAt
                           ? formatDistanceToNow(new Date(token.lastUsedAt), { addSuffix: true })
                           : 'Never'}
@@ -269,7 +278,7 @@ export default function TokensPage() {
               </Table>
             </div>
           ) : (
-            <div className="text-center py-8 text-muted-foreground">
+            <div className="text-center py-8 text-gray-400 font-body">
               No API tokens yet. Create one to get started.
             </div>
           )}

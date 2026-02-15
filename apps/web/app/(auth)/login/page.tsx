@@ -1,5 +1,5 @@
-import { LoginForm } from '@/components/auth/login-form'
+import { UnifiedAuthForm } from '@/components/auth/unified-auth-form'
 
 export default function LoginPage() {
-  return <LoginForm />
+  return <UnifiedAuthForm defaultMode="login" />
 }

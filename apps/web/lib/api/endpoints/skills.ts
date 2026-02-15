@@ -53,6 +53,11 @@ export const skillsApi = {
     })
     return response.data
   },
+
+  // Delete skill
+  deleteSkill: async (org: string, name: string): Promise<void> => {
+    await apiClient.delete(`/skills/@${org}/${name}`)
+  },
 }
 
 // Export individual functions for easier importing
@@ -64,4 +69,5 @@ export const {
   listOrgSkills,
   listAllSkills,
   updateSkillAccess,
+  deleteSkill,
 } = skillsApi

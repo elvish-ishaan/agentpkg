@@ -5,6 +5,7 @@ import { Sparkles, Copy, Check } from 'lucide-react'
 import { Della_Respira } from 'next/font/google'
 import { useState } from 'react'
 import { TerminalDemo } from './terminal'
+import { AvailableAgents } from './available-agents'
 
 const dellaRespira = Della_Respira({
   weight: "400",
@@ -75,6 +76,9 @@ export function HeroSection() {
               )}
             </Button>
           </div>
+
+          {/* Available Agents */}
+          <AvailableAgents />
 
           {/* Terminal Demo */}
           <div className="relative mt-16 w-full max-w-5xl">

@@ -48,30 +48,30 @@ export function OrgMembers({ members, orgName, isOwner, currentUserId }: OrgMemb
 
   return (
     <div className="space-y-4">
-      <h2 className="text-2xl font-bold">Members</h2>
+      <h2 className="text-2xl font-bold text-white" style={{ fontFamily: 'var(--font-della-respira)' }}>Members</h2>
 
-      <div className="border rounded-lg">
+      <div className="border border-white/10 rounded-lg">
         <Table>
           <TableHeader>
-            <TableRow>
-              <TableHead>Username</TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead>Joined</TableHead>
-              {isOwner && <TableHead className="w-[100px]">Actions</TableHead>}
+            <TableRow className="border-white/10">
+              <TableHead className="text-gray-400">Username</TableHead>
+              <TableHead className="text-gray-400">Role</TableHead>
+              <TableHead className="text-gray-400">Joined</TableHead>
+              {isOwner && <TableHead className="text-gray-400 w-[100px]">Actions</TableHead>}
             </TableRow>
           </TableHeader>
           <TableBody>
             {members.map((member) => (
-              <TableRow key={member.id}>
-                <TableCell className="font-medium">
+              <TableRow key={member.id} className="border-white/10">
+                <TableCell className="font-medium text-white">
                   {member.user?.username || 'Unknown'}
                 </TableCell>
                 <TableCell>
-                  <Badge variant={member.role === 'OWNER' ? 'default' : 'secondary'}>
+                  <Badge variant={member.role.toUpperCase() === 'OWNER' ? 'default' : 'secondary'}>
                     {member.role}
                   </Badge>
                 </TableCell>
-                <TableCell className="text-muted-foreground">
+                <TableCell className="text-gray-400">
                   {member.createdAt
                     ? formatDistanceToNow(new Date(member.createdAt), { addSuffix: true })
                     : 'Unknown'}

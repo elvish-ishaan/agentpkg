@@ -1,5 +1,5 @@
-import { RegisterForm } from '@/components/auth/register-form'
+import { UnifiedAuthForm } from '@/components/auth/unified-auth-form'
 
 export default function RegisterPage() {
-  return <RegisterForm />
+  return <UnifiedAuthForm defaultMode="register" />
 }

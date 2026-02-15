@@ -23,37 +23,39 @@ interface AgentVersionsProps {
 export function AgentVersions({ versions, orgName, agentName, latestVersion }: AgentVersionsProps) {
   return (
     <div className="space-y-4">
-      <h2 className="text-2xl font-bold">Version History</h2>
+      <h2 className="text-2xl font-bold text-white" style={{ fontFamily: 'var(--font-della-respira)' }}>
+        Version History
+      </h2>
 
-      <div className="border rounded-lg">
+      <div className="border border-white/10 rounded-lg bg-white/5 backdrop-blur-sm overflow-hidden">
         <Table>
           <TableHeader>
-            <TableRow>
-              <TableHead>Version</TableHead>
-              <TableHead>Published By</TableHead>
-              <TableHead>Published</TableHead>
+            <TableRow className="border-white/10 hover:bg-white/5">
+              <TableHead className="text-gray-400 font-body">Version</TableHead>
+              <TableHead className="text-gray-400 font-body">Published By</TableHead>
+              <TableHead className="text-gray-400 font-body">Published</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {versions.map((version) => (
-              <TableRow key={version.id}>
+              <TableRow key={version.id} className="border-white/10 hover:bg-white/5">
                 <TableCell>
                   <Link
                     href={`/agent/@${orgName}/${agentName}/v/${version.version}`}
-                    className="font-mono font-medium hover:underline flex items-center gap-2"
+                    className="font-mono font-medium hover:underline flex items-center gap-2 text-white"
                   >
                     {version.version}
                     {version.version === latestVersion && (
-                      <Badge variant="secondary" className="text-xs">
+                      <Badge variant="secondary" className="text-xs bg-white/10 text-white border-white/20">
                         Latest
                       </Badge>
                     )}
                   </Link>
                 </TableCell>
-                <TableCell>
+                <TableCell className="text-white font-body">
                   {version.publishedBy?.username || 'Unknown'}
                 </TableCell>
-                <TableCell className="text-muted-foreground">
+                <TableCell className="text-gray-400 font-body">
                   {version.createdAt ? formatDistanceToNow(new Date(version.createdAt), { addSuffix: true }) : 'N/A'}
                 </TableCell>
               </TableRow>

@@ -59,3 +59,22 @@ export function usePublishAgent() {
     },
   })
 }
+
+export function useDeleteAgent() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ org, name }: { org: string; name: string }) =>
+      agentsApi.deleteAgent(org, name),
+    onSuccess: (_, variables) => {
+      // Invalidate relevant queries
+      queryClient.invalidateQueries({ queryKey: queryKeys.agents.all })
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.agents.byOrg(variables.org),
+      })
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.agents.detail(variables.org, variables.name),
+      })
+    },
+  })
+}

@@ -59,3 +59,22 @@ export function usePublishSkill() {
     },
   })
 }
+
+export function useDeleteSkill() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ org, name }: { org: string; name: string }) =>
+      skillsApi.deleteSkill(org, name),
+    onSuccess: (_, variables) => {
+      // Invalidate relevant queries
+      queryClient.invalidateQueries({ queryKey: queryKeys.skills.all })
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.skills.byOrg(variables.org),
+      })
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.skills.detail(variables.org, variables.name),
+      })
+    },
+  })
+}

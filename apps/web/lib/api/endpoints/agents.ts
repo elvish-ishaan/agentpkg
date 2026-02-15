@@ -53,6 +53,11 @@ export const agentsApi = {
     })
     return response.data
   },
+
+  // Delete agent
+  deleteAgent: async (org: string, name: string): Promise<void> => {
+    await apiClient.delete(`/agents/@${org}/${name}`)
+  },
 }
 
 // Export individual functions for easier importing
@@ -64,4 +69,5 @@ export const {
   listOrgAgents,
   listAllAgents,
   updateAgentAccess,
+  deleteAgent,
 } = agentsApi
