@@ -7,55 +7,70 @@ interface TerminalDemoProps {
 export function TerminalDemo({ className }: TerminalDemoProps) {
   return (
     <Terminal className={className}>
-      <TypingAnimation>&gt; pnpm dlx shadcn@latest init</TypingAnimation>
+      <TypingAnimation>&gt; agentpkg add agent @acme/code-reviewer</TypingAnimation>
 
       <AnimatedSpan className="text-green-500">
-        ✔ Preflight checks.
+        ✔ Fetching agent info...
       </AnimatedSpan>
 
       <AnimatedSpan className="text-green-500">
-        ✔ Verifying framework. Found Next.js.
+        ✔ Downloading...
       </AnimatedSpan>
 
       <AnimatedSpan className="text-green-500">
-        ✔ Validating Tailwind CSS.
+        ✔ Checksum verified
+      </AnimatedSpan>
+
+      <AnimatedSpan className="text-muted-foreground">
+        ✓ Installed @acme/code-reviewer@1.2.0
+      </AnimatedSpan>
+
+      <TypingAnimation className="mt-4">
+        &gt; agentpkg publish agent --org acme --name helper --version 2.0.0
+      </TypingAnimation>
+
+      <AnimatedSpan className="text-green-500">
+        ✔ Reading helper.agent.md (3.2 KB)
       </AnimatedSpan>
 
       <AnimatedSpan className="text-green-500">
-        ✔ Validating import alias.
+        ✔ Publishing...
+      </AnimatedSpan>
+
+      <AnimatedSpan className="text-muted-foreground">
+        ✓ Published @acme/helper@2.0.0
+      </AnimatedSpan>
+
+      <TypingAnimation className="mt-4">
+        &gt; agentpkg add skill @acme/debugger
+      </TypingAnimation>
+
+      <AnimatedSpan className="text-green-500">
+        ✔ Fetching skill info...
       </AnimatedSpan>
 
       <AnimatedSpan className="text-green-500">
-        ✔ Writing components.json.
+        ✔ Checksum verified
       </AnimatedSpan>
 
-      <AnimatedSpan className="text-green-500">
-        ✔ Checking registry.
+      <AnimatedSpan className="text-muted-foreground">
+        ✓ Installed @acme/debugger@1.0.0
       </AnimatedSpan>
 
-      <AnimatedSpan className="text-green-500">
-        ✔ Updating tailwind.config.ts
-      </AnimatedSpan>
+      <TypingAnimation className="mt-4">
+        &gt; agentpkg list @acme agents
+      </TypingAnimation>
 
-      <AnimatedSpan className="text-green-500">
-        ✔ Updating app/globals.css
-      </AnimatedSpan>
-
-      <AnimatedSpan className="text-green-500">
-        ✔ Installing dependencies.
+      <AnimatedSpan className="text-blue-500">
+        <span>• code-reviewer@1.2.0</span>
       </AnimatedSpan>
 
       <AnimatedSpan className="text-blue-500">
-        <span>ℹ Updated 1 file:</span>
-        <span className="pl-2">- lib/utils.ts</span>
+        <span>• helper@2.0.0</span>
       </AnimatedSpan>
 
-      <TypingAnimation className="text-muted-foreground">
-        Success! Project initialization completed.
-      </TypingAnimation>
-
-      <TypingAnimation className="text-muted-foreground">
-        You may now add components.
+      <TypingAnimation className="text-muted-foreground mt-2">
+        Ready to build with AI agents and skills.
       </TypingAnimation>
     </Terminal>
   )

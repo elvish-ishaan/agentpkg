@@ -8,7 +8,7 @@ const command = args[0];
 
 // Handle version flag
 if (command === "--version" || command === "-v") {
-  console.log("agentpkg v0.1.0");
+  console.log("agentpkg v0.2.0");
   process.exit(0);
 }
 

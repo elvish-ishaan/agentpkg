@@ -47,7 +47,7 @@ bunx @agentpkg/cli --help
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/agentpkg.git
+git clone https://github.com/elvish-ishaan/agentpkg.git
 cd agentpkg/apps/cli
 
 # Install dependencies
@@ -63,44 +63,26 @@ agentpkg --help
 ## Quick Start
 
 ```bash
-# 1. Create an account
-agentpkg register
+# 1. Create an account (via web UI at https://agentpkg.com)
 
-# 2. Initialize a new agent
-agentpkg init
+# 2. Login via CLI
+agentpkg login
 
-# 3. Edit agent.agent.md with your agent's instructions
+# 3. Create agent.agent.md manually with your agent's instructions
+# (or use the web UI to create and manage agents)
 
 # 4. Publish your agent
-agentpkg publish
+agentpkg publish agent
 
 # 5. Install someone else's agent
-agentpkg install @acme/my-agent
+agentpkg add agent @acme/my-agent
 ```
 
 ## Commands
 
 ### Authentication
 
-#### `agentpkg register`
-
-Create a new AgentPKG account. You'll be prompted for:
-- Email address
-- Username (lowercase, alphanumeric, hyphens only)
-- Password (minimum 8 characters)
-
-A default organization with your username is created automatically.
-
-```bash
-$ agentpkg register
-┌  AgentPKG Registration
-│
-◆  Email: user@example.com
-◆  Username: johndoe
-◆  Password: ••••••••
-│
-└  ✓ Welcome, johndoe! Your default org '@johndoe' has been created.
-```
+> **Note:** Account registration is only available through the web interface at https://agentpkg.com. After creating an account on the web, you can login via the CLI.
 
 #### `agentpkg login`
 
@@ -139,25 +121,16 @@ $ agentpkg whoami
 
 ### Agent Management
 
-#### `agentpkg init`
+> **Note:** To create an `agent.agent.md` file, either create it manually following the format described in the "Agent File Format" section below, or use the web UI at https://agentpkg.com.
 
-Create an `agent.agent.md` template file in the current directory.
-
-```bash
-$ agentpkg init
-✓ Created agent.agent.md
-```
-
-The template includes frontmatter for metadata and a basic instruction structure.
-
-#### `agentpkg publish`
+#### `agentpkg publish agent`
 
 Publish an agent to the registry. **All agents are private by default** (only org members can view/install).
 
 **Interactive mode** (default):
 
 ```bash
-$ agentpkg publish
+$ agentpkg publish agent
 ┌  Publish Agent
 │
 ◇  Reading agent.agent.md... (12.5 KB)
@@ -190,10 +163,10 @@ $ agentpkg publish
 
 ```bash
 # Publish as private (default)
-$ agentpkg publish --org myorg --name myagent --version 1.0.0 --yes
+$ agentpkg publish agent --org myorg --name myagent --version 1.0.0 --yes
 
 # Publish as public
-$ agentpkg publish --org myorg --name myagent --version 1.0.0 --access public --yes
+$ agentpkg publish agent --org myorg --name myagent --version 1.0.0 --access public --yes
 ```
 
 Options:
@@ -208,22 +181,24 @@ Options:
 - **Private** (default): Only organization members can view and install
 - **Public**: Anyone can view and install
 
-#### `agentpkg install <@org/agent>`
+#### `agentpkg add agent <@org/agent>`
 
 Install an agent from the registry.
 
+> **Deprecation Notice:** The `agentpkg install` command is deprecated. Use `agentpkg add agent` instead. The `install` command will be removed in v1.0.0.
+
 ```bash
 # Install latest version
-$ agentpkg install @acme/my-agent
+$ agentpkg add agent @acme/my-agent
 
 # Install specific version
-$ agentpkg install @acme/my-agent@1.2.0
+$ agentpkg add agent @acme/my-agent@1.2.0
 ```
 
 Agents are installed to `.github/agents/<name>.agent.md`.
 
 ```bash
-$ agentpkg install @acme/my-agent
+$ agentpkg add agent @acme/my-agent
 ┌  Install @acme/my-agent (latest)
 │
 ◇  Fetching agent info...
@@ -234,12 +209,12 @@ $ agentpkg install @acme/my-agent
    Location: .github/agents/my-agent.agent.md
 ```
 
-#### `agentpkg list <org>`
+#### `agentpkg list <org> agents`
 
 List all agents published by an organization.
 
 ```bash
-$ agentpkg list acme
+$ agentpkg list acme agents
 
   Agents in @acme:
 
@@ -249,6 +224,112 @@ $ agentpkg list acme
 
   • another-agent@2.1.0
     Another awesome agent
+    Published: 1/2/2026
+```
+
+### Skill Management
+
+Skills are reusable capabilities that can be added to AI agents. They follow the same publishing and access control model as agents.
+
+#### `agentpkg add skill <@org/skill>`
+
+Install a skill from the registry.
+
+```bash
+# Install latest version
+$ agentpkg add skill @acme/my-skill
+
+# Install specific version
+$ agentpkg add skill @acme/my-skill@1.0.0
+```
+
+Skills are installed to `.github/skills/<name>/SKILL.md`.
+
+```bash
+$ agentpkg add skill @acme/my-skill
+┌  Install @acme/my-skill (latest)
+│
+◇  Fetching skill info...
+◇  Downloading...
+◇  Verifying checksum...
+│
+└  ✓ Installed @acme/my-skill@1.0.0
+   Location: .github/skills/my-skill/SKILL.md
+```
+
+#### `agentpkg publish skill`
+
+Publish a skill to the registry. **All skills are private by default** (only org members can view/install).
+
+**Interactive mode** (default):
+
+```bash
+$ agentpkg publish skill
+┌  Publish Skill
+│
+◇  Reading SKILL.md... (8.2 KB)
+│
+◆  Select organization:
+│  ● myorg
+│  ○ acme-corp
+│
+◆  Skill name: my-awesome-skill
+◆  Version: 1.0.0
+◆  Description (optional): An awesome reusable skill
+◆  Access level:
+│  ● Private (org members only)
+│  ○ Public (anyone can view)
+│
+├  Details:
+│  • Organization: @myorg
+│  • Name: my-awesome-skill
+│  • Version: 1.0.0
+│  • Access: Private
+│  • Size: 8.2 KB
+│  • Checksum: b4e8c3d2...
+│
+◆  Publish @myorg/my-awesome-skill@1.0.0? Yes
+│
+└  ✓ Published @myorg/my-awesome-skill@1.0.0
+```
+
+**Non-interactive mode** (for CI/CD):
+
+```bash
+# Publish as private (default)
+$ agentpkg publish skill --org myorg --name myskill --version 1.0.0 --yes
+
+# Publish as public
+$ agentpkg publish skill --org myorg --name myskill --version 1.0.0 --access public --yes
+
+# Specify skill directory
+$ agentpkg publish skill --org myorg --name myskill --version 1.0.0 --dir .github/skills/myskill --yes
+```
+
+Options:
+- `--org <name>`: Organization name (required)
+- `--name <name>`: Skill name (required)
+- `--version <version>`: Version in semver format (required)
+- `--description <desc>`: Skill description (optional)
+- `--access <level>`: Access level - `private` (default) or `public`
+- `--dir <path>`: Skill directory path (optional, defaults to current directory)
+- `--yes`: Skip all prompts
+
+#### `agentpkg list <org> skills`
+
+List all skills published by an organization.
+
+```bash
+$ agentpkg list acme skills
+
+  Skills in @acme:
+
+  • my-skill@1.0.0
+    A helpful reusable skill
+    Published: 1/1/2026
+
+  • another-skill@2.1.0
+    Another awesome skill
     Published: 1/2/2026
 ```
 
@@ -328,23 +409,23 @@ Configuration is stored in `~/.agentpkg/config.json`:
 
 ```json
 {
-  "apiUrl": "http://localhost:4000",
+  "apiUrl": "https://api.agentpkg.com",
   "token": "your-auth-token"
 }
 ```
 
 ### Environment Variables
 
-- `AGENTPKG_API_URL`: Override the API base URL (default: `http://localhost:4000`)
-  - For production use, set this to your deployed API URL
+- `AGENTPKG_API_URL`: Override the API base URL (default: `https://api.agentpkg.com`)
+  - For local development, set this to `http://localhost:4000`
 
 Example:
 ```bash
-# Set API URL for production
-export AGENTPKG_API_URL=https://api.yourdomain.com
+# Set API URL for local development
+export AGENTPKG_API_URL=http://localhost:4000
 
 # Or add to your shell profile (~/.bashrc, ~/.zshrc)
-echo 'export AGENTPKG_API_URL=https://api.yourdomain.com' >> ~/.zshrc
+echo 'export AGENTPKG_API_URL=http://localhost:4000' >> ~/.zshrc
 
 agentpkg login
 ```
@@ -353,11 +434,16 @@ agentpkg login
 
 ```
 .
-├── agent.agent.md              # Your agent file (created by init)
+├── agent.agent.md              # Your agent file (create manually or via web UI)
 └── .github/
-    └── agents/                 # Installed agents directory
-        ├── agent1.agent.md
-        └── agent2.agent.md
+    ├── agents/                 # Installed agents directory
+    │   ├── agent1.agent.md
+    │   └── agent2.agent.md
+    └── skills/                 # Installed skills directory
+        ├── skill1/
+        │   └── SKILL.md
+        └── skill2/
+            └── SKILL.md
 ```
 
 ## Access Control
@@ -430,8 +516,10 @@ You are a helpful AI agent...
 
 Use non-interactive mode for automated publishing:
 
+### Agent Publishing Workflow
+
 ```yaml
-# .github/workflows/publish.yml
+# .github/workflows/publish-agent.yml
 name: Publish Agent
 
 on:
@@ -454,10 +542,10 @@ jobs:
             --access private \
             --yes
         env:
-          AGENTPKG_API_URL: https://api.agentpkg.com
+          AGENTPKG_API_URL: ${{ secrets.AGENTPKG_API_URL || 'https://api.agentpkg.com' }}
+          AGENTPKG_TOKEN: ${{ secrets.AGENTPKG_TOKEN }}
 
-# For public agents
-jobs:
+  # For public agents
   publish-public:
     runs-on: ubuntu-latest
     steps:
@@ -472,8 +560,42 @@ jobs:
             --access public \
             --yes
         env:
-          AGENTPKG_API_URL: https://api.agentpkg.com
+          AGENTPKG_API_URL: ${{ secrets.AGENTPKG_API_URL || 'https://api.agentpkg.com' }}
+          AGENTPKG_TOKEN: ${{ secrets.AGENTPKG_TOKEN }}
 ```
+
+### Skill Publishing Workflow
+
+```yaml
+# .github/workflows/publish-skill.yml
+name: Publish Skill
+
+on:
+  push:
+    tags:
+      - 'skill-v*'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: oven-sh/setup-bun@v1
+      - run: bun install -g @agentpkg/cli
+      - run: |
+          agentpkg publish skill \
+            --org myorg \
+            --name myskill \
+            --version ${GITHUB_REF#refs/tags/skill-v} \
+            --dir .github/skills/myskill \
+            --access private \
+            --yes
+        env:
+          AGENTPKG_API_URL: ${{ secrets.AGENTPKG_API_URL || 'https://api.agentpkg.com' }}
+          AGENTPKG_TOKEN: ${{ secrets.AGENTPKG_TOKEN }}
+```
+
+> **Note:** Store your authentication token in GitHub Secrets as `AGENTPKG_TOKEN`. You can get your token from `~/.agentpkg/config.json` after logging in.
 
 ## Development
 
@@ -544,8 +666,8 @@ MIT - see [LICENSE](../../LICENSE) file for details
 
 ## Support
 
-- **Issues**: https://github.com/yourusername/agentpkg/issues
-- **Discussions**: https://github.com/yourusername/agentpkg/discussions
+- **Issues**: https://github.com/elvish-ishaan/agentpkg/issues
+- **Discussions**: https://github.com/elvish-ishaan/agentpkg/discussions
 - **npm Package**: https://www.npmjs.com/package/@agentpkg/cli
 
 ## Changelog

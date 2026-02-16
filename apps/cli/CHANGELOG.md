@@ -51,6 +51,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Existing content from v0.1.0 will be private after database migration
 - Use `update-access` command or web UI to make content public if desired
 
+### Deprecated
+- **`install` command**: Use `agentpkg add agent` instead. The `install` command will be removed in v1.0.0.
+  - Old: `agentpkg install @org/agent`
+  - New: `agentpkg add agent @org/agent`
+
 ### Example Usage
 
 ```bash
@@ -71,19 +76,22 @@ agentpkg publish agent --org myorg --name myagent --version 1.0.0 --access publi
 
 ### Added
 - Initial release of AgentPKG CLI
-- User authentication (register, login, logout, whoami)
-- Agent lifecycle management (init, publish, install)
+- User authentication (login, logout, whoami)
+  - **Note:** Registration is web-only, not available via CLI
+  - `register` and `init` commands were never implemented
+- Agent lifecycle management (publish, install)
+- Skill lifecycle management (publish, add)
 - Organization management (create, list)
-- Agent discovery (list agents by organization)
+- Agent and skill discovery (list by organization)
 - Beautiful terminal UI powered by Clack
-- Checksum verification for agent files
+- Checksum verification for agent and skill files
 - Interactive and non-interactive (CI/CD) modes
 - Support for semantic versioning
 - Configuration management (~/.agentpkg/config.json)
 - Environment variable support (AGENTPKG_API_URL)
 - Comprehensive error handling and validation
 - Agent installation to .github/agents/ directory
-- Automatic default organization creation
+- Skill installation to .github/skills/ directory
 - Token-based authentication
 
 ### Features

@@ -64,6 +64,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Web UI: Toggle on agent/skill page
   - CLI: `agentpkg update-access agent --access public`
 
+### ⚠️ Deprecated
+- **CLI `install` command**: Use `agentpkg add agent` instead. The `install` command will be removed in v1.0.0.
+  - Old: `agentpkg install @org/agent`
+  - New: `agentpkg add agent @org/agent`
+
 ### 📦 Dependencies
 - Added `nodemailer` for email functionality
 - Added `@types/nodemailer` for TypeScript support
@@ -80,7 +85,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### CLI Features
 - Authentication commands (`login`, `logout`, `whoami`)
-- Agent management (`add agent`, `publish agent`)
+  - **Note:** Registration is web-only, not available via CLI
+  - `register` and `init` commands were never implemented
+- Agent management (`add agent`, `publish agent`, `install` [deprecated])
 - Skill management (`add skill`, `publish skill`)
 - Organization management (`orgs list`, `orgs create`)
 - List commands for agents and skills

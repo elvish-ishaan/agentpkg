@@ -68,11 +68,12 @@ EXAMPLES
 CONFIGURATION
   Config file: ~/.agentpkg/config.json
   Environment variables:
-    AGENTPKG_API_URL    API base URL (default: http://localhost:4000)
+    AGENTPKG_API_URL    API base URL (default: https://api.agentpkg.com)
+                        For local development: http://localhost:4000
 
 LEARN MORE
-  Documentation: https://github.com/yourusername/agentpkg
-  Issues: https://github.com/yourusername/agentpkg/issues
+  Documentation: https://github.com/elvish-ishaan/agentpkg
+  Issues: https://github.com/elvish-ishaan/agentpkg/issues
 `);
 }
 

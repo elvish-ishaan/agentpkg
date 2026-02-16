@@ -7,7 +7,7 @@ import { dirname, join } from "node:path";
 export function readAgentFile(path: string): string {
   if (!existsSync(path)) {
     throw new Error(
-      `No ${path} file found in current directory. Run 'agentpkg init' to create one.`,
+      `No ${path} file found in current directory. Create the file manually (see documentation) or use the web UI.`,
     );
   }
 

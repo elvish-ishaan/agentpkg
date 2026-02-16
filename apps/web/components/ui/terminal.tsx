@@ -66,7 +66,7 @@ export const AnimatedSpan = ({
       initial={{ opacity: 0, y: -5 }}
       animate={shouldAnimate ? { opacity: 1, y: 0 } : { opacity: 0, y: -5 }}
       transition={{ duration: 0.3, delay: sequence ? 0 : delay / 1000 }}
-      className={cn("grid text-sm font-normal tracking-tight", className)}
+      className={cn("grid text-sm font-normal tracking-tight text-left justify-items-start", className)}
       onAnimationComplete={() => {
         if (!sequence) return
         if (itemIndex === null) return
@@ -173,7 +173,7 @@ export const TypingAnimation = ({
   return (
     <MotionComponent
       ref={elementRef}
-      className={cn("text-sm font-normal tracking-tight", className)}
+      className={cn("text-sm font-normal tracking-tight text-left", className)}
       {...props}
     >
       {displayedText}
@@ -240,7 +240,7 @@ export const Terminal = ({
         </div>
       </div>
       <pre className="p-4">
-        <code className="grid gap-y-1 overflow-auto">{wrappedChildren}</code>
+        <code className="grid gap-y-1 overflow-auto text-left">{wrappedChildren}</code>
       </pre>
     </div>
   )

@@ -33,10 +33,7 @@ export function LandingNavbar() {
           <div className="flex items-center justify-between">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2 text-lg font-bold">
-              <Bot className="h-5 w-5 text-white" />
-              <span className="text-white" style={{ fontFamily: "'Della Respira', serif" }}>
-                AgentPkg
-              </span>
+              <Bot className=" size-6 text-white" />
             </Link>
 
             {/* Desktop Nav Links */}
