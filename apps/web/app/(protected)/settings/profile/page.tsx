@@ -87,7 +87,7 @@ export default function ProfilePage() {
               <div>
                 <p className="text-sm font-medium text-gray-400 mb-1 font-body">Member Since</p>
                 <p className="text-sm text-white font-body">
-                  {formatDistanceToNow(new Date(user.createdAt), { addSuffix: true })}
+                  {user.createdAt ? formatDistanceToNow(new Date(user.createdAt), { addSuffix: true }) : 'N/A'}
                 </p>
               </div>
             </div>

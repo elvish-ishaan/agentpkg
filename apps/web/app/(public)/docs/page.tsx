@@ -1,7 +1,5 @@
 'use client'
 
-import { LandingNavbar } from '@/components/landing/landing-navbar'
-import { LandingFooter } from '@/components/landing/landing-footer'
 import { DocSection } from '@/components/docs/doc-section'
 import { DocSidebar } from '@/components/docs/doc-sidebar'
 import { CodeBlock } from '@/components/docs/code-block'
@@ -46,10 +44,8 @@ const sections = [
 export default function DocsPage() {
   return (
     <div className="min-h-screen bg-black">
-      <LandingNavbar />
-
       {/* Documentation Content */}
-      <div className="bg-[#0f0f0f] min-h-screen pt-10">
+      <div className="bg-[#0f0f0f] min-h-screen">
         <div className="container mx-auto max-w-7xl px-4 py-16">
           <div className="flex gap-12">
             {/* Sidebar */}
@@ -763,8 +759,6 @@ To use this skill...
           </div>
         </div>
       </div>
-
-      <LandingFooter />
     </div>
   )
 }
