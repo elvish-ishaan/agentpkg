@@ -131,59 +131,26 @@ export default function DashboardPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8"
+          className="flex flex-wrap gap-3 mb-6 sm:mb-8"
         >
-          <Card className="bg-white/5 border-white/10 backdrop-blur-sm hover:border-white/20 transition-all group">
-            <CardHeader className="p-4 sm:p-6">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <CardTitle className="flex items-center gap-2 sm:gap-3 text-white text-lg sm:text-xl">
-                    <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-white/10 flex items-center justify-center border border-white/20 group-hover:bg-white/20 transition-all flex-shrink-0">
-                      <Plus className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
-                    </div>
-                    <span>Create Organization</span>
-                  </CardTitle>
-                  <CardDescription className="mt-2 text-sm sm:text-base text-gray-400 font-body">
-                    Start collaborating with your team and publish packages together
-                  </CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="p-4 sm:p-6 pt-0">
-              <CreateOrgDialog>
-                <Button className="w-full bg-white text-black hover:bg-gray-200 font-body text-sm sm:text-base">
-                  <Plus className="mr-2 h-4 w-4" />
-                  New Organization
-                </Button>
-              </CreateOrgDialog>
-            </CardContent>
-          </Card>
+          <CreateOrgDialog>
+            <Button className="bg-white text-black hover:bg-gray-200 font-body">
+              <Plus className="mr-2 h-4 w-4" />
+              Create Organization
+            </Button>
+          </CreateOrgDialog>
 
-          <Card className="bg-white/5 border-white/10 backdrop-blur-sm hover:border-white/20 transition-all group">
-            <CardHeader className="p-4 sm:p-6">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <CardTitle className="flex items-center gap-2 sm:gap-3 text-white text-lg sm:text-xl">
-                    <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-white/10 flex items-center justify-center border border-white/20 group-hover:bg-white/20 transition-all flex-shrink-0">
-                      <Package className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
-                    </div>
-                    <span>Publish Agent</span>
-                  </CardTitle>
-                  <CardDescription className="mt-2 text-sm sm:text-base text-gray-400 font-body">
-                    Share your AI agent with the community and track its performance
-                  </CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="p-4 sm:p-6 pt-0">
-              <PublishAgentDialog>
-                <Button className="w-full bg-white/10 border-white/20 text-white hover:bg-white/20 font-body text-sm sm:text-base" variant="outline">
-                  <Package className="mr-2 h-4 w-4" />
-                  Publish Agent
-                </Button>
-              </PublishAgentDialog>
-            </CardContent>
-          </Card>
+          <PublishAgentDialog>
+            <Button className="bg-white/10 border-white/20 text-white hover:bg-white/20 font-body" variant="outline">
+              <Package className="mr-2 h-4 w-4" />
+              Publish Agent
+            </Button>
+          </PublishAgentDialog>
+
+          <Button className="bg-white/10 border-white/20 text-white hover:bg-white/20 font-body" variant="outline">
+            <Star className="mr-2 h-4 w-4" />
+            Publish Skill
+          </Button>
         </motion.div>
 
         {/* Organizations Section */}

@@ -205,16 +205,6 @@ export class SkillService {
       throw new NotFoundError('Latest version not found');
     }
 
-    // Increment download counter
-    const updatedSkill = await prisma.skill.update({
-      where: { id: skill.id },
-      data: {
-        downloads: {
-          increment: 1,
-        },
-      },
-    });
-
     // Generate signed URL (but make it optional for development)
     let downloadUrl = '';
     try {
@@ -230,7 +220,7 @@ export class SkillService {
       name: skill.name,
       description: skill.description,
       orgId: skill.orgId,
-      downloads: updatedSkill.downloads,
+      downloads: skill.downloads,
       access: skill.access,
       createdAt: skill.createdAt,
       updatedAt: skill.updatedAt,
@@ -299,16 +289,6 @@ export class SkillService {
       }
     }
 
-    // Increment download counter
-    const updatedSkill = await prisma.skill.update({
-      where: { id: skillVersion.skill.id },
-      data: {
-        downloads: {
-          increment: 1,
-        },
-      },
-    });
-
     // Generate signed URL (but make it optional for development)
     let downloadUrl = '';
     try {
@@ -324,7 +304,7 @@ export class SkillService {
       name: skillVersion.skill.name,
       description: skillVersion.skill.description,
       orgId: skillVersion.skill.orgId,
-      downloads: updatedSkill.downloads,
+      downloads: skillVersion.skill.downloads,
       access: skillVersion.skill.access,
       createdAt: skillVersion.skill.createdAt,
       updatedAt: skillVersion.skill.updatedAt,

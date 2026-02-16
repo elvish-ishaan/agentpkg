@@ -7,7 +7,7 @@ export default function ProtectedLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="flex min-h-screen w-full relative">
+    <div className="flex h-screen w-full relative overflow-hidden">
       {/* Background Pattern */}
       <div
         className="absolute inset-0 z-0"
@@ -24,7 +24,7 @@ export default function ProtectedLayout({
 
       <OrgProvider>
         <DashboardSidebar />
-        <main className="flex-1 overflow-auto relative z-10">{children}</main>
+        <main className="flex-1 overflow-y-auto relative z-10">{children}</main>
       </OrgProvider>
     </div>
   )

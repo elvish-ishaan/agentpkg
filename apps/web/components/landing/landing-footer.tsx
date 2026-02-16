@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { Package, Github } from 'lucide-react'
+import { TextHoverEffect } from '@/components/ui/text-hover-effect'
 
 const footerSections = {
   product: {
@@ -56,7 +57,7 @@ export function LandingFooter() {
             </p>
             <div className="flex items-center gap-4">
               <Link
-                href="https://github.com"
+                href="https://github.com/elvish-ishaan/agentpkg"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-foreground transition-colors"
@@ -136,9 +137,15 @@ export function LandingFooter() {
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="mt-16 pt-8 border-t">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+        {/* Bottom Bar with Text Hover Effect */}
+        <div className="mt-16 pt-8 border-t space-y-8">
+          {/* Large Text Hover Effect */}
+          <div className="h-48 md:h-64 w-full flex items-center justify-center">
+            <TextHoverEffect text="agentpkg" duration={0.3} />
+          </div>
+
+          {/* Copyright and Love Message */}
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4 pb-4">
             <p className="text-sm font-body text-muted-foreground">
               © {new Date().getFullYear()} AgentPkg. All rights reserved.
             </p>
@@ -147,6 +154,7 @@ export function LandingFooter() {
             </p>
           </div>
         </div>
+
       </div>
     </footer>
   )

@@ -205,16 +205,6 @@ export class AgentService {
       throw new NotFoundError('Latest version not found');
     }
 
-    // Increment download counter
-    const updatedAgent = await prisma.agent.update({
-      where: { id: agent.id },
-      data: {
-        downloads: {
-          increment: 1,
-        },
-      },
-    });
-
     // Generate signed URL (but make it optional for development)
     let downloadUrl = '';
     try {
@@ -230,7 +220,7 @@ export class AgentService {
       name: agent.name,
       description: agent.description,
       orgId: agent.orgId,
-      downloads: updatedAgent.downloads,
+      downloads: agent.downloads,
       access: agent.access,
       createdAt: agent.createdAt,
       updatedAt: agent.updatedAt,
@@ -299,16 +289,6 @@ export class AgentService {
       }
     }
 
-    // Increment download counter
-    const updatedAgent = await prisma.agent.update({
-      where: { id: agentVersion.agent.id },
-      data: {
-        downloads: {
-          increment: 1,
-        },
-      },
-    });
-
     // Generate signed URL (but make it optional for development)
     let downloadUrl = '';
     try {
@@ -324,7 +304,7 @@ export class AgentService {
       name: agentVersion.agent.name,
       description: agentVersion.agent.description,
       orgId: agentVersion.agent.orgId,
-      downloads: updatedAgent.downloads,
+      downloads: agentVersion.agent.downloads,
       access: agentVersion.agent.access,
       createdAt: agentVersion.agent.createdAt,
       updatedAt: agentVersion.agent.updatedAt,

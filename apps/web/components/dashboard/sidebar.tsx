@@ -117,10 +117,13 @@ export function DashboardSidebar() {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-4 space-y-1">
+      <nav className="flex-1 p-4 space-y-2">
         {navigationItems.map((item) => {
           const Icon = item.icon
-          const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
+          // For Dashboard, only match exact path. For others, match path and sub-routes
+          const isActive = item.href === '/dashboard'
+            ? pathname === '/dashboard'
+            : pathname === item.href || pathname.startsWith(item.href + '/')
 
           return (
             <Link key={item.href} href={item.href}>
@@ -128,7 +131,7 @@ export function DashboardSidebar() {
                 whileHover={{ x: 4 }}
                 transition={{ duration: 0.2 }}
                 className={cn(
-                  'flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all font-body',
+                  'flex items-center gap-3 px-4 py-3 rounded-lg transition-all font-body',
                   isActive
                     ? 'bg-white text-black'
                     : 'text-gray-400 hover:bg-white/5 hover:text-white'

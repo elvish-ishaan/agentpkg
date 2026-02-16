@@ -1,6 +1,6 @@
 'use client'
 
-import { use } from 'react'
+import { use, useState } from 'react'
 import { useSkill, useSkillVersions } from '@/lib/hooks/use-skills'
 import { SkillHeader } from '@/components/skills/skill-header'
 import { SkillReadme } from '@/components/skills/skill-readme'
@@ -9,7 +9,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { AlertCircle } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { AlertCircle, Copy, Check } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 
 interface SkillPageProps {
@@ -21,12 +22,23 @@ interface SkillPageProps {
 
 export default function SkillPage({ params }: SkillPageProps) {
   const { org: rawOrg, name } = use(params)
+  const [copied, setCopied] = useState(false)
 
   // Strip @ prefix since API client adds it back
   const org = rawOrg.startsWith('@') ? rawOrg.slice(1) : rawOrg
 
   const { data: skill, isLoading: skillLoading, error: skillError } = useSkill(org, name)
   const { data: versions, isLoading: versionsLoading } = useSkillVersions(org, name)
+
+  const handleCopy = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch (err) {
+      console.error('Failed to copy:', err)
+    }
+  }
 
   if (skillLoading) {
     return (
@@ -113,8 +125,22 @@ export default function SkillPage({ params }: SkillPageProps) {
                 </CardDescription>
               </CardHeader>
               <CardContent className="pb-3 md:pb-6">
-                <div className="bg-white/5 border border-white/10 p-2 md:p-3 rounded-md font-mono text-xs md:text-sm text-white overflow-x-auto">
-                  <code className="break-all">agentpkg add skill @{skill.org?.name}/{skill.name}</code>
+                <div className="relative">
+                  <div className="bg-white/5 border border-white/10 p-2 md:p-3 pr-10 rounded-md font-mono text-xs md:text-sm text-white overflow-x-auto">
+                    <code className="break-all">agentpkg add skill @{skill.org?.name}/{skill.name}</code>
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 p-0 hover:bg-white/10"
+                    onClick={() => handleCopy(`agentpkg add skill @${skill.org?.name}/${skill.name}`)}
+                  >
+                    {copied ? (
+                      <Check className="h-3.5 w-3.5 text-green-400" />
+                    ) : (
+                      <Copy className="h-3.5 w-3.5 text-gray-400" />
+                    )}
+                  </Button>
                 </div>
               </CardContent>
             </Card>

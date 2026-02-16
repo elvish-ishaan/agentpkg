@@ -1,6 +1,6 @@
 'use client'
 
-import { use } from 'react'
+import { use, useState } from 'react'
 import { useAgent, useAgentVersions } from '@/lib/hooks/use-agents'
 import { AgentHeader } from '@/components/agents/agent-header'
 import { AgentReadme } from '@/components/agents/agent-readme'
@@ -9,7 +9,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { AlertCircle } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { AlertCircle, Copy, Check } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 
 interface AgentPageProps {
@@ -21,12 +22,23 @@ interface AgentPageProps {
 
 export default function AgentPage({ params }: AgentPageProps) {
   const { org: rawOrg, name } = use(params)
+  const [copied, setCopied] = useState(false)
 
   // Strip @ prefix since API client adds it back
   const org = rawOrg.startsWith('@') ? rawOrg.slice(1) : rawOrg
 
   const { data: agent, isLoading: agentLoading, error: agentError } = useAgent(org, name)
   const { data: versions, isLoading: versionsLoading } = useAgentVersions(org, name)
+
+  const handleCopy = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch (err) {
+      console.error('Failed to copy:', err)
+    }
+  }
 
   if (agentLoading) {
     return (
@@ -113,8 +125,22 @@ export default function AgentPage({ params }: AgentPageProps) {
                 </CardDescription>
               </CardHeader>
               <CardContent className="pb-3 md:pb-6">
-                <div className="bg-white/5 border border-white/10 p-2 md:p-3 rounded-md font-mono text-xs md:text-sm text-white overflow-x-auto">
-                  <code className="break-all">npx agentpkg install @{agent.org?.name}/{agent.name}</code>
+                <div className="relative">
+                  <div className="bg-white/5 border border-white/10 p-2 md:p-3 pr-10 rounded-md font-mono text-xs md:text-sm text-white overflow-x-auto">
+                    <code className="break-all">npx agentpkg install @{agent.org?.name}/{agent.name}</code>
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 p-0 hover:bg-white/10"
+                    onClick={() => handleCopy(`npx agentpkg install @${agent.org?.name}/${agent.name}`)}
+                  >
+                    {copied ? (
+                      <Check className="h-3.5 w-3.5 text-green-400" />
+                    ) : (
+                      <Copy className="h-3.5 w-3.5 text-gray-400" />
+                    )}
+                  </Button>
                 </div>
               </CardContent>
             </Card>
