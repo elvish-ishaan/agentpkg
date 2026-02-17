@@ -23,7 +23,7 @@ export function LandingNavbar() {
     { href: '/agent', label: 'Agents' },
     { href: '/skill', label: 'Skills' },
     { href: '/docs', label: 'Documentation' },
-    { href: '#pricing', label: 'Pricing' },
+    { href: '/pricing', label: 'Pricing' },
   ]
 
   return (

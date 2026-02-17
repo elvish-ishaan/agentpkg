@@ -9,7 +9,7 @@ const footerSections = {
       { label: 'Agents', href: '/agent' },
       { label: 'Skills', href: '/skill' },
       { label: 'Organizations', href: '/org' },
-      { label: 'Pricing', href: '#pricing' },
+      { label: 'Pricing', href: '/pricing' },
     ],
   },
   developers: {
@@ -44,7 +44,7 @@ const footerSections = {
 export function LandingFooter() {
   return (
     <footer className="border-t bg-background">
-      <div className="container px-4 py-16">
+      <div className="px-4 py-16 lg:w-full">
         <div className="grid grid-cols-2 md:grid-cols-6 gap-8 md:gap-12">
           {/* Brand Section */}
           <div className="col-span-2 space-y-4">
