@@ -5,7 +5,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import { authApi } from '@/lib/api/endpoints/auth'
 import { queryKeys } from '@/lib/api/query-keys'
-import { setAuthToken, removeAuthToken, clientTokenManager } from './token-manager'
+import { setAuthToken, removeAuthToken } from './token-manager'
+import { clientTokenManager } from './client-token-manager'
 import type { User, LoginData, RegisterData } from '@/types/api'
 
 interface AuthContextType {

@@ -1,8 +1,13 @@
 import axios, { AxiosError, AxiosResponse } from 'axios'
 import type { ApiResponse, ApiError } from '@/types/api'
-import { clientTokenManager } from '@/lib/auth/token-manager'
+import { clientTokenManager } from '@/lib/auth/client-token-manager'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'
+
+// Log API URL in development to help debug
+if (typeof window !== 'undefined' && process.env.NODE_ENV !== 'production') {
+  console.log('API URL:', API_URL)
+}
 
 // Client-side axios instance
 export const apiClient = axios.create({
