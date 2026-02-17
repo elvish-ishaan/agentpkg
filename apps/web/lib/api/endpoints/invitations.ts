@@ -47,7 +47,7 @@ export async function createInvitation(
     `/invitations/${orgName}`,
     data
   )
-  return response.data
+  return response.data.data
 }
 
 /**
@@ -60,7 +60,7 @@ export async function acceptInvitation(
     '/invitations/accept',
     data
   )
-  return response.data
+  return response.data.data
 }
 
 /**
@@ -70,7 +70,7 @@ export async function listOrgInvitations(orgName: string): Promise<Invitation[]>
   const response = await apiClient.get<ApiResponse<Invitation[]>>(
     `/invitations/${orgName}`
   )
-  return response.data
+  return response.data.data
 }
 
 /**
@@ -80,5 +80,5 @@ export async function cancelInvitation(invitationId: string): Promise<{ message:
   const response = await apiClient.delete<ApiResponse<{ message: string }>>(
     `/invitations/${invitationId}`
   )
-  return response.data
+  return response.data.data
 }

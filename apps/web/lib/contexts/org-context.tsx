@@ -42,7 +42,7 @@ export function OrgProvider({ children }: { children: React.ReactNode }) {
 
     // Default to first org if no saved org or saved org not found
     if (!activeOrgName && userOrgs.length > 0) {
-      setActiveOrgName(userOrgs[0].name)
+      setActiveOrgName(userOrgs[0]!.name)
     }
   }, [userOrgs, isLoadingOrgs, activeOrgName])
 

@@ -14,10 +14,10 @@ import {
   Settings,
   FileCode,
   AlertCircle,
-  CheckCircle2
+  CheckCircle2,
+  Terminal
 } from 'lucide-react'
 import Link from 'next/link'
-import { Terminal } from '@/components/ui/terminal'
 
 const sections = [
   { id: 'getting-started', title: 'Getting Started', children: [

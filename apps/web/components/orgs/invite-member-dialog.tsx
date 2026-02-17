@@ -27,9 +27,10 @@ import { createInvitation } from '@/lib/api/endpoints/invitations'
 interface InviteMemberDialogProps {
   orgName: string
   onInviteSent?: () => void
+  children?: React.ReactNode
 }
 
-export function InviteMemberDialog({ orgName, onInviteSent }: InviteMemberDialogProps) {
+export function InviteMemberDialog({ orgName, onInviteSent, children }: InviteMemberDialogProps) {
   const [open, setOpen] = useState(false)
   const [email, setEmail] = useState('')
   const [role, setRole] = useState<'member' | 'owner'>('member')
@@ -66,10 +67,12 @@ export function InviteMemberDialog({ orgName, onInviteSent }: InviteMemberDialog
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>
-          <Mail className="mr-2 h-4 w-4" />
-          Invite Member
-        </Button>
+        {children || (
+          <Button>
+            <Mail className="mr-2 h-4 w-4" />
+            Invite Member
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <form onSubmit={handleSubmit}>

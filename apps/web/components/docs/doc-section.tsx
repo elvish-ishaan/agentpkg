@@ -1,6 +1,6 @@
 'use client'
 
-import { ReactNode } from 'react'
+import React, { ReactNode } from 'react'
 import { motion } from 'motion/react'
 
 interface DocSectionProps {
@@ -12,7 +12,7 @@ interface DocSectionProps {
 }
 
 export function DocSection({ id, title, description, children, level = 2 }: DocSectionProps) {
-  const HeadingTag = `h${level}` as keyof JSX.IntrinsicElements
+  const HeadingTag = `h${level}` as keyof React.JSX.IntrinsicElements
 
   const headingStyles = {
     1: 'text-4xl md:text-5xl font-bold mb-4',

@@ -4,7 +4,7 @@ import { AgentCard } from '@/components/agents/agent-card'
 import { SkillCard } from '@/components/skills/skill-card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ArrowRight } from 'lucide-react'
-import type { Agent, Skill } from '@agentpkg/types'
+import type { Agent, Skill } from '@/types/api'
 
 interface PopularPackagesSectionProps {
   agents: Agent[]

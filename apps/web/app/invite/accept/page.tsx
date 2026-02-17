@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -9,7 +9,7 @@ import { Loader2, CheckCircle2, XCircle, Mail } from 'lucide-react'
 import { acceptInvitation } from '@/lib/api/endpoints/invitations'
 import { useAuth } from '@/lib/hooks/use-auth'
 
-export default function AcceptInvitationPage() {
+function AcceptInvitationContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const { user, isLoading: authLoading } = useAuth()
@@ -133,5 +133,25 @@ export default function AcceptInvitationPage() {
         </CardContent>
       </Card>
     </div>
+  )
+}
+
+export default function AcceptInvitationPage() {
+  return (
+    <Suspense fallback={
+      <div className="container flex items-center justify-center min-h-[80vh]">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <div className="flex justify-center mb-4">
+              <Loader2 className="h-12 w-12 animate-spin text-primary" />
+            </div>
+            <CardTitle>Loading</CardTitle>
+            <CardDescription>Please wait...</CardDescription>
+          </CardHeader>
+        </Card>
+      </div>
+    }>
+      <AcceptInvitationContent />
+    </Suspense>
   )
 }
