@@ -5,7 +5,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import { authApi } from '@/lib/api/endpoints/auth'
 import { queryKeys } from '@/lib/api/query-keys'
-import { setAuthToken, removeAuthToken } from './token-manager'
+import { setAuthToken, removeAuthToken, clientTokenManager } from './token-manager'
 import type { User, LoginData, RegisterData } from '@/types/api'
 
 interface AuthContextType {
@@ -42,6 +42,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     onSuccess: async (data) => {
       // Set token in HTTP-only cookie
       await setAuthToken(data.token)
+      // Also store in localStorage for client-side API requests
+      clientTokenManager.set(data.token)
       // Update user in cache
       queryClient.setQueryData(queryKeys.auth.me(), data.user)
       // Redirect to dashboard
@@ -55,6 +57,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     onSuccess: async (data) => {
       // Set token in HTTP-only cookie
       await setAuthToken(data.token)
+      // Also store in localStorage for client-side API requests
+      clientTokenManager.set(data.token)
       // Update user in cache
       queryClient.setQueryData(queryKeys.auth.me(), data.user)
       // Redirect to dashboard
@@ -65,6 +69,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Logout function
   const logout = async () => {
     await removeAuthToken()
+    // Also remove from localStorage
+    clientTokenManager.remove()
     queryClient.invalidateQueries({ queryKey: queryKeys.auth.me() })
     router.refresh() // Force middleware to re-run and see cookie is gone
     router.push('/')

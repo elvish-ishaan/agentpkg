@@ -1,5 +1,6 @@
 import axios, { AxiosError, AxiosResponse } from 'axios'
 import type { ApiResponse, ApiError } from '@/types/api'
+import { clientTokenManager } from '@/lib/auth/token-manager'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'
 
@@ -11,6 +12,20 @@ export const apiClient = axios.create({
   },
   withCredentials: true, // Send cookies with requests
 })
+
+// Request interceptor to attach auth token from localStorage
+apiClient.interceptors.request.use(
+  (config) => {
+    const token = clientTokenManager.get()
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
+    return config
+  },
+  (error) => {
+    return Promise.reject(error)
+  }
+)
 
 // Response interceptor to extract data from { success: true, data: {...} }
 apiClient.interceptors.response.use(
